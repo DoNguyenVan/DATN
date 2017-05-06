@@ -1,0 +1,92 @@
+
+.menu-home{
+	background:url(../img/home-icon-white.png);
+	overflow:hidden;
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	margin-top:15px;
+	margin-left: 2%;
+}
+.menu-home a{
+	display: table;
+	padding-left:20%;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#ffffff;
+}
+ .menu-student{
+	background:url(../img/student-icon-white.png);
+	overflow:hidden;
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	margin-top:15px;
+	margin-left: 2%;
+}
+.menu-student a{
+	display: table;
+	padding-left:20%;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#ffffff;
+}
+.menu-class{
+	background:url(../img/class-icon-white.png);
+	overflow:hidden;
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	margin-top:15px;
+	margin-left: 2%;
+}
+ .menu-class a{
+	display: table;
+	padding-left: 20%;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#ffffff;
+}
+ .menu-checked{
+	background:url(../img/check-icon-w1.png);
+	overflow:hidden;
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	margin-top:15px;
+	margin-left: 2%;
+}
+ .menu-checked a{
+	display: table;
+	padding-left: 20%;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#ffffff;
+}
+ .menu-teacher{
+	background:url(../img/Teacher-icon.png);
+	overflow:hidden;
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	margin-top:15px;
+	margin-left: 2%;
+}
+ .menu-teacher a{
+	display: table;
+	padding-left: 20%;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#ffffff;
+}
+ .menu-finance{
+	background:url(../img/Finance-icon.png);
+	overflow:hidden;
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	margin-top:15px;
+	margin-left: 2%;
+}
+ .menu-finance a{
+	display: table;
+	padding-left: 20%;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 20px;
+	color:#ffffff;
+}
+/*------------------------------------------End Sidebar ---------------------------*/
