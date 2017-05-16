@@ -34,11 +34,12 @@ public class Teacher {
 	private String dateOfBirth;
 	private String phoneNumber;
 	private String email;
+	private String gender;
 	private Address stAddress;
 	private User tcAccount;
 	private Set<Skill> tcSkill = new HashSet<>();
 	private Collection<Salary> tcSalary ;
-	private Collection<Class> tcClassList;
+	private Set<Class> tcClassList = new HashSet<>();
 	/**
 	 * 
 	 */
@@ -130,12 +131,22 @@ public class Teacher {
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "teacher")
 	@Fetch(value = FetchMode.SUBSELECT)
-	public Collection<Class> getTcClassList() {
+	public Set<Class> getTcClassList() {
 		return tcClassList;
 	}
 
-	public void setTcClassList(Collection<Class> tcClassList) {
+	public void setTcClassList(Set<Class> tcClassList) {
 		this.tcClassList = tcClassList;
 	}
+	
+	@Column(name="gender",length=50,nullable=true)
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
 		
+	
 }

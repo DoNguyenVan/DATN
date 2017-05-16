@@ -45,7 +45,7 @@
 					
 					<div class="col-xs-6 col-sm-6 col-md-6" id="dashboard">						
 						 <h1 class="col-xs-12 col-md-12 col-sm-12">Dashboards</h1>						   
-						   <a href="${pageContext.request.contextPath}/listClass">
+						   <a href="${pageContext.request.contextPath}/admin/listClass">
 								<div class="col-xs-6 col-sm-6 col-md-6" > 
 									<div class="widget lazur-bg p-xl">
 										<h2>Class</h2>
@@ -58,19 +58,19 @@
 								</div>
 							</a>
 						 
-						  <a href="${pageContext.request.contextPath}/listStudent">
+						  <a href="${pageContext.request.contextPath}/admin/listStudent">
 							<div class="col-xs-6 col-sm-6 col-md-6 "> 
 								<div class="widget lazur-bg p-xl">								
 									<h2>Student</h2>
 									<ul class="list-unstyled m-t-md">
 										<li class="pull-right">
-											Total ${stTotal}  
+											Total ${stTotal}
 										</li>
 									</ul> 
 								</div>	
 							 </div>	
 						 </a>
-					    <a href="${pageContext.request.contextPath}/listTeacher">
+					    <a href="${pageContext.request.contextPath}/admin/listTeacher">
 								<div class="col-xs-6 col-sm-6 col-md-6" > 
 									<div class="widget lazur-bg p-xl">
 										<h2>Teacher</h2>
@@ -82,7 +82,7 @@
 									</div>	
 								</div>
 							</a>
-					    <a href="${pageContext.request.contextPath}/Finance">
+					    <a href="${pageContext.request.contextPath}/admin/Finance">
 								<div class="col-xs-6 col-sm-6 col-md-6" > 
 									<div class="widget lazur-bg p-xl">
 										<h2>Finance</h2>
@@ -99,22 +99,20 @@
 								
 						<div class="col-xs-offset-1 col-xs-6 col-sm-offset-2 col-sm-6 col-md-offset-1 col-md-6" id="scrollSpace">	
 							<h1 class="col-xs-12 col-sm-12 col-md-12">Student Of class</h1>
-							<c:forEach items="${classList}" var="list">							
-							  <a href="${pageContext.request.contextPath}/CheckAttendace">
+							<c:forEach items="${classList}" var="object">
 								<div class="col-xs-6 col-sm-6 col-md-6"> 
 									<div class="widget style1 navy-bg">
 										<h4>
-											Class ${list.className}
+											Class ${object.className }
 										</h4>
 										<ul class="list-unstyled m-t-md">
 											<li class="pull-right">
-												<span>${list.numberSTofCLASS }</span>
+												<span> ${object.numberSTofCLASS}</span>
 											</li>
 										</ul>
 									</div>	
 								</div>
-								</a>
-							</c:forEach>								 
+							</c:forEach>							 
 						</div>			
 				 </div>  
 				<!-- end content-->  

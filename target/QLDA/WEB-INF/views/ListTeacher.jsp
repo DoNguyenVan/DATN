@@ -40,8 +40,8 @@
 				 	<div class="row  border-bottom white-bg dashboard-header">
 						<div class="col-xs-12 col-sm-12 col-md-12">
 							<div class="row">
-							  <div class="col-xs-10 col-sm-10 col-md-10"><h2>Full List Of Teachers in the System </h2></div>
-							  <div class="btn-add"><a href="${pageContext.request.contextPath}/addTeacher"><input type="button" value="Add Teacher" class="btn btn-warning"/></a></div>		
+							  <div class="col-xs-10 col-sm-10 col-md-10"><h2>Full List Of Class in the System </h2></div>
+							  <div class="btn-add"><a href="${pageContext.request.contextPath}/admin/addTeacher"><input type="button" value="Add Teacher" class="btn btn-warning"/></a></div>		
 							 </div>	 
 								<span id="message">${message}</span>
 						</div>						
@@ -56,8 +56,8 @@
 							    <th>Full Name</th>							    
 							    <th>Birthday</th>
 							    <th>Phone Number</th>
-							    <th>Email</th>	
-							    <th>Address</th>					    
+							    <th>Email</th>
+							    <th>Address</th>							    
 							    <th>Action</th>
 							   </tr>
 							</thead>
@@ -89,7 +89,7 @@
 															<h2>Are You Sure ? </h2>
 														</div>
 														<div class="modal-footer"> 
-														<form class="delete-form" action="${pageContext.request.contextPath}/doDeleteTeacher" method="get">
+														<form class="delete-form" action="${pageContext.request.contextPath}/doDeleteTeacher" method="post">
 														   <input type="hidden" value="${list.teacherId}"  name ="teacherid" id ="teacherid">														  
 															<button type="submit" class="btn btn-danger">
 																Yes

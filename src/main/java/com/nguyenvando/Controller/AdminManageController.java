@@ -5,6 +5,13 @@ package com.nguyenvando.Controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,28 +33,32 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.nguyenvando.Entities.Address;
-import com.nguyenvando.Entities.City;
+
 import com.nguyenvando.Entities.Class;
-import com.nguyenvando.Entities.Course;
+import com.nguyenvando.Entities.Salary;
+import com.nguyenvando.Entities.SchoolFee;
+import com.nguyenvando.Entities.Skill;
 import com.nguyenvando.Entities.Student;
 import com.nguyenvando.Entities.Teacher;
 import com.nguyenvando.Entities.Time;
 import com.nguyenvando.Entities.User;
-import com.nguyenvando.Entities.UserRole;
 import com.nguyenvando.Services.ClassManagementService;
 import com.nguyenvando.Services.FinanceManagementService;
 import com.nguyenvando.Services.StudentManagementService;
 import com.nguyenvando.Services.TeacherManagementService;
 import com.nguyenvando.Utils.ClassFormAdd;
 import com.nguyenvando.Utils.FormFinance;
+import com.nguyenvando.Utils.FormForList;
+import com.nguyenvando.Utils.MyAppUtil;
+import com.nguyenvando.Utils.Statistic;
 import com.nguyenvando.Utils.StudentFormAdd;
 import com.nguyenvando.Utils.TeacherFormAdd;
+import com.nguyenvando.Utils.urlPathForController;
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
-import com.sun.xml.internal.ws.encoding.XMLHTTPBindingCodec;
 
 @Controller
 @EnableWebMvc
+@RequestMapping(value = "/admin")
 public class AdminManageController {
 
 	@Autowired
@@ -66,7 +76,7 @@ public class AdminManageController {
 	private Class currentClass;
 	private int currentClassId;
 
-	@RequestMapping(value = "/AdminManagement")
+	@RequestMapping(value = "/AdminManagement",method=RequestMethod.GET)
 	public ModelAndView adminPageHome(Map<String, Object> map) {
 		ModelAndView model = new ModelAndView();
 		map.put("classtotal", classService.countAllClass());
@@ -84,6 +94,8 @@ public class AdminManageController {
 	public ModelAndView adminPageViewListClass(Map<String, Object> map) {
 		ModelAndView model = new ModelAndView();
 		map.put("listClass", classService.getAllClass());
+		map.put("search_course", new FormForList());
+		map.put("listCourse",classService.getCourse());
 		model.setViewName("ListClass");
 		return model;
 	}
@@ -107,6 +119,9 @@ public class AdminManageController {
 		
 		try {
 			// Generate Class Entity
+			
+			byte[]bytes = classForm.getClassName().getBytes(StandardCharsets.ISO_8859_1);
+			classForm.setClassName(new String(bytes,StandardCharsets.UTF_8));		
 			currentClass = classService.generateClassEntity(classForm);
 			boolean checkPoint = true;
 
@@ -143,7 +158,7 @@ public class AdminManageController {
 					currentClassId = classService.getMaxClassId(currentClass, "classId");
 					//classObject = classService.getClassById(currentClassId);
 					redirectAttributes.addFlashAttribute("success", "Class has been created successfully!");
-					model.setViewName("redirect:/SetSchedule");
+					model.setViewName("redirect:/admin/SetSchedule");
 				} catch (JDBCException jdbce) {
 					map.put("errorMessage", "Failed to add database! Please check your connection and try again!");
 					model.setViewName("AddClass");
@@ -199,9 +214,9 @@ public class AdminManageController {
 					classService.generateTimeEntity(classService.getClassById(currentClassId), timeStr));
 
 			redirectAttributes.addFlashAttribute("success", "Time has been created successfully!");
-			return "redirect:/SetSchedule";
+			return "redirect:/admin/SetSchedule";
 		} catch (Exception e) {
-			return "redirect:/SetSchedule";
+			return "redirect:/admin/SetSchedule";
 		}
 
 	}
@@ -227,17 +242,17 @@ public class AdminManageController {
 				}
 				classService.deleteClass(classObjectForDelete);
 				redirectAttributes.addFlashAttribute("message", "Class has been deleted successfully!");
-				model.setViewName("redirect:/listClass");
+				model.setViewName("redirect:/admin/listClass");
 			} catch (JDBCException jdbce) {
 				redirectAttributes.addFlashAttribute("message", jdbce.getMessage());
-				model.setViewName("redirect:/listClass");
+				model.setViewName("redirect:/admin/listClass");
 			} catch (Exception e) {
 				redirectAttributes.addFlashAttribute("message", e.getMessage());
-				model.setViewName("redirect:/listClass");
+				model.setViewName("redirect:/admin/listClass");
 			}
 		} else {
 			redirectAttributes.addFlashAttribute("message", "Not found Class!");
-			model.setViewName("redirect:/listClass");
+			model.setViewName("redirect:/admin/listClass");
 		}
 
 		return model;
@@ -262,7 +277,7 @@ public class AdminManageController {
 	@RequestMapping(value = "/listStudent")
 	public ModelAndView adminPageViewListStudent(Map<String, Object> map) {
 		ModelAndView model = new ModelAndView();
-		map.put("listStudent", studentService.getListStudent());
+		map.put("listStudent", studentService.getDistinctListStudent());
 		model.setViewName("ListStudent");
 		return model;
 	}
@@ -271,26 +286,23 @@ public class AdminManageController {
 	public ModelAndView viewAddStudentPage(Map<String, Object> map) {
 		ModelAndView model = new ModelAndView();
 		map.put("StudentForm", new StudentFormAdd());
-		map.put("ClassMap", studentService.mapClass(null)); 
+		map.put("ClassMap", studentService.mapClass(null,null)); 
 		map.put("classLevel", classService.mapClassLevel());
 		map.put("cityMap", studentService.mapCity());
 		map.put("districtMap", studentService.mapDistrict(0));
 		map.put("schoolMap", studentService.mapSchool());
+		map.put("genderMap", studentService.mapGender());
+		map.put("search_course", new FormForList());
+		map.put("listCourse",classService.getCourse());
 		model.setViewName("AddStudent");
 		return model;
 	}
-
-	@ResponseBody
-	@RequestMapping(value="/changeClassList",method=RequestMethod.GET)
-	public Map<Integer,String> getMapClass(@RequestParam(name="data")String data){		
-		return studentService.mapClass(data);
-	}
 	
 	@RequestMapping(value = "/doAddStudent", method = RequestMethod.POST)
-	public ModelAndView doAddStudent(@ModelAttribute("StudentForm")StudentFormAdd st, Map<String, Object> map,
+	public ModelAndView doAddStudent(@ModelAttribute("StudentForm")StudentFormAdd st,
+			@ModelAttribute("search_course")FormForList ff, Map<String, Object> map,
 			final RedirectAttributes redirectAttributes) {
 		ModelAndView model = new ModelAndView();		
-		
 		try{
 			boolean checkPoint = true;
 			EmailValidator emailValidator = EmailValidator.getInstance();		
@@ -313,10 +325,10 @@ public class AdminManageController {
 				 map.put("phoneformat", "Invalid phone number! Try again!");
 			 }
 			 if(checkPoint){	
-				 try{					 
+				 try{	
 						 studentService.saveorupdate(st);		
 						 redirectAttributes.addFlashAttribute("message", "Student has been created successfully!");
-						 model.setViewName("redirect:/listStudent");
+						 model.setViewName("redirect:/admin/listStudent");
 					 }catch(JDBCException jdbce){
 						 map.put("message", jdbce.getMessage());
 						 return this.formAddStudent(map, st);
@@ -331,11 +343,11 @@ public class AdminManageController {
 		catch(Exception e){
 		 map.put("message", e.getMessage());
 		 return this.formAddStudent(map, st);
-		}
+		}			
 		return model;
 	}
 	
-	@RequestMapping(value="/doDeleteStudent",method=RequestMethod.GET)
+	@RequestMapping(value="/doDeleteStudent",method=RequestMethod.POST)
 	public ModelAndView doDeleteStudent(@RequestParam(name = "studentid") String studentid,
 			final RedirectAttributes redirectAttributes){
 		ModelAndView model = new ModelAndView();
@@ -344,17 +356,17 @@ public class AdminManageController {
 				Student st = studentService.getStudentById(Integer.parseInt(studentid));
 				studentService.deleteStudent(st);
 				redirectAttributes.addFlashAttribute("message", "Student has been deleted successfully!");
-				model.setViewName("redirect:/listStudent");
+				model.setViewName("redirect:/admin/listStudent");
 			} catch (JDBCException jdbce) {
 				redirectAttributes.addFlashAttribute("message", jdbce.getMessage());
-				model.setViewName("redirect:/listStudent");
+				model.setViewName("redirect:/admin/listStudent");
 			} catch (Exception e) {
 				redirectAttributes.addFlashAttribute("message", e.getMessage());
-				model.setViewName("redirect:/listStudent");
+				model.setViewName("redirect:/admin/listStudent");
 			}
 		} else {
 			redirectAttributes.addFlashAttribute("message", "Not found Student!");
-			model.setViewName("redirect:/listStudent");
+			model.setViewName("redirect:/admin/listStudent");
 		}
 
 		return model;
@@ -363,11 +375,14 @@ public class AdminManageController {
 	private ModelAndView formAddStudent(Map<String, Object> map,StudentFormAdd st ) {
 		ModelAndView view = new ModelAndView();
 		map.put("StudentForm", st);
-		map.put("ClassMap", studentService.mapClass(null)); 
+		map.put("ClassMap", studentService.mapClass(null,null)); 
 		map.put("classLevel", classService.mapClassLevel());
 		map.put("cityMap", studentService.mapCity());
 		map.put("districtMap", studentService.mapDistrict(0));
 		map.put("schoolMap", studentService.mapSchool());
+		map.put("genderMap", studentService.mapGender());
+		map.put("search_course", new FormForList());
+		map.put("listCourse",classService.getCourse());
 		view.setViewName("AddStudent");
 		return view;
 	}
@@ -425,6 +440,10 @@ public class AdminManageController {
 				 checkPoint = false;
 				 map.put("emailformat", "This email has been registered!");
 			 }
+			 if (studentService.isValidAccount(new User(), "username", tc.getUserName())) {
+				 checkPoint = false;
+				 map.put("validAccount", "This Account has been registered!");
+			 }
 			 if(!studentService.isPhoneFormat(tc.getPhoneNumber())){
 				 checkPoint = false;
 				 map.put("phoneformat", "Invalid phone number! Try again!");
@@ -456,7 +475,7 @@ public class AdminManageController {
 				 try{
 					 teacherService.saveOrUpdateTeacher(tc);
 					 redirectAttributes.addFlashAttribute("message", "Teacher has been created successfully!");
-					 model.setViewName("redirect:/listTeacher");
+					 model.setViewName("redirect:/admin/listTeacher");
 				 }catch(JDBCException jdbce){
 					map.put("message", jdbce.getMessage());
 					return this.formAddTeacher(map, tc);
@@ -467,7 +486,7 @@ public class AdminManageController {
 				 }
 				 
 			 }else{
-				 map.put("message", "cannot save to database1");
+				 map.put("message", "cannot save into database");
 				 return this.formAddTeacher(map, tc);
 			 }		
 		}catch(Exception e){
@@ -486,17 +505,17 @@ public class AdminManageController {
 				Teacher  tc = teacherService.getTeacherById(Integer.parseInt(teacherid));
 				teacherService.deleteTeacher(tc);
 				redirectAttributes.addFlashAttribute("message", "Techer has been deleted successfully!");
-				model.setViewName("redirect:/listTeacher");
+				model.setViewName("redirect:/admin/listTeacher");
 			} catch (JDBCException jdbce) {
 				redirectAttributes.addFlashAttribute("message", jdbce.getMessage());
-				model.setViewName("redirect:/listTeacher");
+				model.setViewName("redirect:/admin/listTeacher");
 			} catch (Exception e) {
 				redirectAttributes.addFlashAttribute("message", e.getMessage());
-				model.setViewName("redirect:/listTeacher");
+				model.setViewName("redirect:/admin/listTeacher");
 			}
 		} else {
 			redirectAttributes.addFlashAttribute("message", "Not found Teacher!");
-			model.setViewName("redirect:/listTeacher");
+			model.setViewName("redirect:/admin/listTeacher");
 		}
 
 		return model;
@@ -533,8 +552,130 @@ public class AdminManageController {
 		ModelAndView view =  new ModelAndView();
 		map.put("FinanceForm", new FormFinance());
 		map.put("mapMonths", financeService.mapMonths());
+		map.put("mapYear", financeService.mapYears());
+		view.setViewName("Finance");
+		return view;
+	}	
+	
+	@RequestMapping(value="/statistics",method=RequestMethod.POST)
+	public ModelAndView doSatistics(@ModelAttribute("FinanceForm")FormFinance financeForm,
+			@RequestParam("searchValue")String searchValue,Map<String, Object> map){
+		try{
+			
+			if("month".equals(searchValue)){
+				if(financeForm.getMonth1()>financeForm.getMonth2()){
+					map.put("error","Month Form < Month To!");
+					map.put("searchValue", searchValue);
+					return this.adminManageFinance_Error(map, new FormFinance());
+				}else{
+					String date1 = financeService.generate_Month_date1(financeForm);
+					String date2 =  financeService.generate_Month_date2(financeForm);
+					List<Salary> salary = financeService.getSalaryFrom_To("datePaid",date1,date2);
+					List<SchoolFee> schoolFee = financeService.getSchoolFeeForm_To("datePaid", date1, date2);
+					List<Statistic>statistics = new ArrayList<>();					
+					float total1 = 0; float total2=0; 
+					for (SchoolFee fee : schoolFee) {
+						Statistic statistic = new Statistic();
+						statistic.setActivity("Thu Học Phí");
+						statistic.setProceeds(fee.getFeeValue());
+						statistic.setDate(financeService.getInstanceUtilsApp().Date_To_String(fee.getDatePaid()));
+						statistics.add(statistic);
+						total1 += statistic.getProceeds();
+					}
+					
+					for (Salary sa : salary) {
+						Statistic statistic = new Statistic();
+						statistic.setActivity("Trả Lương");
+						statistic.setPayouts(sa.getMoney());
+						statistic.setDate(financeService.getInstanceUtilsApp().Date_To_String(sa.getDatePaid()));
+						statistics.add(statistic);
+						total2 += statistic.getPayouts();
+					}
+					
+					
+					map.put("statistic", statistics);
+					map.put("total1", total1);
+					map.put("total2", total2);
+					map.put("total3", total1-total2);
+					map.put("searchValue", searchValue);
+					return this.adminManageFinance_Month(map, financeForm);
+				}
+				
+			}
+			else if("year".equals(searchValue)){
+				if(financeForm.getMonth3()>financeForm.getMonth4()){
+					map.put("error","Month Form < Month To!");
+					map.put("searchValue", searchValue);
+					return this.adminManageFinance_Error(map, new FormFinance());
+				}else{
+					String date1 = financeService.generate_Year_date1(financeForm);
+					String date2 = financeService.generate_Year_date2(financeForm);
+					List<Salary> salary = financeService.getSalaryFrom_To("datePaid",date1,date2);
+					List<SchoolFee> schoolFee = financeService.getSchoolFeeForm_To("datePaid", date1, date2);
+					List<Statistic>statistics = new ArrayList<>();					
+					float total1 = 0; float total2=0; 
+					for (SchoolFee fee : schoolFee) {
+						Statistic statistic = new Statistic();
+						statistic.setActivity("Thu Học Phí");
+						statistic.setProceeds(fee.getFeeValue());
+						statistic.setDate(financeService.getInstanceUtilsApp().Date_To_String(fee.getDatePaid()));
+						statistics.add(statistic);
+						total1 += statistic.getProceeds();
+					}
+					
+					for (Salary sa : salary) {
+						Statistic statistic = new Statistic();
+						statistic.setActivity("Trả Lương");
+						statistic.setPayouts(sa.getMoney());
+						statistic.setDate(financeService.getInstanceUtilsApp().Date_To_String(sa.getDatePaid()));
+						statistics.add(statistic);
+						total2 += statistic.getPayouts();
+					}
+										
+					map.put("statistic", statistics);
+					map.put("total1", total1);
+					map.put("total2", total2);
+					map.put("total3", total1-total2);
+					map.put("searchValue", searchValue);					
+					return this.adminManageFinance_Year(map, financeForm);
+
+				}
+			}			
+			
+		}catch(Exception e){
+			map.put("searchValue", searchValue);
+			map.put("error", e.getMessage());				
+		}
+		return this.adminManageFinance_Error(map, new FormFinance());		
+	}
+	
+	private ModelAndView adminManageFinance_Error(Map<String, Object> map,FormFinance financeForm) {
+		ModelAndView view = new ModelAndView();
+		map.put("mapMonths", financeService.mapMonths());
+		map.put("mapYear", financeService.mapYears());
+		map.put("errors","Cannot find Data!");
 		view.setViewName("Finance");
 		return view;
 	}
 	
+	private ModelAndView adminManageFinance_Month(Map<String, Object> map,FormFinance financeForm) {
+		ModelAndView view = new ModelAndView();
+		map.put("FinanceForm", financeForm);
+		map.put("mapMonths", financeService.mapMonths());
+		map.put("mapYear", financeService.mapYears());
+		view.setViewName("Finance");
+		return view;
+	}
+	private ModelAndView adminManageFinance_Year(Map<String, Object> map,FormFinance financeForm) {
+		ModelAndView view = new ModelAndView();
+		FormFinance fin = new FormFinance(0,0,0,financeForm.getMonth3(),financeForm.getMonth4());
+		map.put("FinanceForm", fin);
+		map.put("mapMonths", financeService.mapMonths());
+		map.put("mapYear", financeService.mapYears());
+		view.setViewName("Finance");
+		return view;
+	}
+	
+	
+
 }

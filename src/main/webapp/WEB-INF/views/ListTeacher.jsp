@@ -1,12 +1,13 @@
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page session="true"%>
 
 
 <html>
 <head>
-<meta  charset="UTF-8">
-<title>List Student</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>List Teacher</title>
 <%@include file="_link.jsp" %>
 <style type="text/css">
    .dataTables_wrapper{
@@ -19,8 +20,56 @@
 	span.glyphicon.glyphicon-edit {
       letter-spacing: 1px;
     }
+  // import button css
+ 	#file{
+	  display: none ;
+	}
+	label.glyphicon.glyphicon-plus {
+      font-family: cursive;
+	}
+	.modal {
+     display: none; /* Hidden by default */
+     position: fixed; /* Stay in place */
+     z-index: 1; /* Sit on top */
+     padding-top: 100px; /* Location of the box */
+     left: 0;
+     top: 0;
+     width: 100%; /* Full width */
+     height: 100%; /* Full height */
+     overflow: auto; /* Enable scroll if needed */
+     background-color: rgb(0,0,0); /* Fallback color */
+     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+    /* Modal Content */
+	.modal-content {
+	    background-color: cornsilk;
+	    margin: auto;
+	    padding: 20px;
+	    border: 1px solid #888;
+	    width: 50%;
+	    height: 70%;
+	}
+	#content{
+	  margin-top: 5%;
+	  margin-bottom: 1%;
+	  overflow: scroll;
+	  height: 200px;
+	}
+	#close {
+     margin-right: 25px;
+     margin-top: 1px;
+	}
+	h4{
+	  font-size: 40px;
+	}
+	
+	div#mydeleteModal {
+     width: 40em;
+     background-color: ghostwhite;
+	}   
+    
+    
 </style>
-
 </head>
 <body>
 
@@ -40,10 +89,45 @@
 				 	<div class="row  border-bottom white-bg dashboard-header">
 						<div class="col-xs-12 col-sm-12 col-md-12">
 							<div class="row">
-							  <div class="col-xs-10 col-sm-10 col-md-10"><h2>Full List Of Class in the System </h2></div>
-							  <div class="btn-add"><a href="${pageContext.request.contextPath}/addTeacher"><input type="button" value="Add Teacher" class="btn btn-warning"/></a></div>		
-							 </div>	 
-								<span id="message">${message}</span>
+							  <div class="col-xs-10 col-sm-10 col-md-10"><h2>Full List Of Teacher in the System </h2></div>
+							  <div class="btn-add"><a href="${pageContext.request.contextPath}/admin/addTeacher"><input type="button" value="Add Teacher" class="btn btn-warning"/></a></div>									 						
+							 </div>	
+							<div class="row col-xs-2 col-sm-2 col-md-2">												 	   					 
+	   					      <a href="#myModal">
+	   					      <button class="btn btn-info btn-lg" type="button" >	        					
+	        					 <label class="glyphicon glyphicon-plus">Import File	</label>				   
+	   					      </button>	 
+	   					      </a> 
+	   				            <!-- The Modal -->
+								<div id="myModal" class="modal">
+								
+								  <!-- Modal content -->
+								  <div class="modal-content">
+								   <form  id="import_Form" action="${pageContext.request.contextPath}/importClass" method="post"
+								     enctype="multipart/form-data">
+									   <div class="row">								  								    
+									       <span class="glyphicon glyphicon-import">Import Data Form File</span>
+									       <span class="close"><label class="glyphicon glyphicon-remove" id="close"></label></span>
+									    </div>
+									    <div class="row">
+									       <button class="glyphicon glyphicon-plus btn-lg" id="btn-add-file" type="button"></button>
+									    </div>
+									    <div id="content"> 
+									     <div class="row"><input name="file" type="file" class="form-control" /></div>	
+									    </div>					
+						               <div class="footer">
+						                 <div class="row">
+						                  <button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-import"></span>Submit</button>
+						                  <button type="button" class="btn btn-primary"><label>Cancel<span class="glyphicon glyphicon-remove"></span></label></button>
+						                 </div>
+						               </div>
+					               </form>
+								  </div>
+								
+								</div> 	      
+	   					  <!-- End model -->      	   					       					      							 
+							</div>  
+							<div class="col-xs-4 col-sm-4 col-md-4"> <span id="message">${message}</span></div>								
 						</div>						
 						<hr>
 					</div>
@@ -53,9 +137,10 @@
 							<thead>
 							  <tr>
 							    <th>STT</th>
-							    <th>Full Name</th>							    
+							    <th>Full Name</th>	
+							    <th>Gender</th>						    
 							    <th>Birthday</th>
-							    <th>Phone Number</th>
+							    <th>Phone</th>
 							    <th>Email</th>
 							    <th>Address</th>							    
 							    <th>Action</th>
@@ -67,6 +152,7 @@
 								 <tr>
 									<td><%=++x %></td>
 									<td>${list.fullName}</td>
+									<td>${list.gender}</td>
 									<td>${list.dateOfBirth}</td>
 									<td>${list.phoneNumber}</td>
 									<td>${list.email}</td>
@@ -89,7 +175,7 @@
 															<h2>Are You Sure ? </h2>
 														</div>
 														<div class="modal-footer"> 
-														<form class="delete-form" action="${pageContext.request.contextPath}/doDeleteTeacher" method="post">
+														<form class="delete-form" action="${pageContext.request.contextPath}/admin/doDeleteTeacher" method="get">
 														   <input type="hidden" value="${list.teacherId}"  name ="teacherid" id ="teacherid">														  
 															<button type="submit" class="btn btn-danger">
 																Yes
@@ -130,6 +216,21 @@
 		} );
 		
 		 $('#message').css({"color":"#009966","font-size":"13px"}).fadeOut(6000);
+		 
+		 $('button.btn.btn-info.btn-lg').click(function () {
+				var modal = document.getElementById('myModal');
+				modal.style.display = "block";
+				$('span.close').click(function () {
+					modal.style.display = "none";
+				});
+				$('button.btn.btn-primary').click(function () {
+					modal.style.display = "none";
+				});
+				
+				$('button#btn-add-file').click(function () {
+					$('#content').append(' <div class="row"><input name="file" type="file" class="form-control" />');
+				});							
+		});
 	
 	} );
 

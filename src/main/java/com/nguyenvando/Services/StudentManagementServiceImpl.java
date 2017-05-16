@@ -1,13 +1,16 @@
 package com.nguyenvando.Services;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.integrator.spi.Integrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,7 +53,14 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 
 		Student st = new Student();
 		try{
-			st.setFullName(stObject.getFullName());
+			// convert to UTF-8
+			
+			byte[] fullName = stObject.getFullName().getBytes(StandardCharsets.ISO_8859_1);
+			byte[] gender = stObject.getGender().getBytes(StandardCharsets.ISO_8859_1);
+			
+			
+			st.setFullName(new String(fullName,StandardCharsets.UTF_8));
+			st.setGender(new String(gender,StandardCharsets.UTF_8));
 			st.setDateOfBirth(stObject.getDateOfBirth());
 			st.setPhoneNumber(stObject.getPhoneNumber());
 			st.setEmail(stObject.getEmail());
@@ -112,7 +122,8 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 			// Add Student To Class and add class for Student
 			Class classObject = myappdao.getEntityById(Class.class, st.getClassOfST());
 			student.getClassOfStudent().add(classObject);
-			classObject.getStList().add(student);			
+			classObject.getStList().add(student);	
+			myappdao.insertOrUpdate(classObject);
 
 			
 	 }catch(Exception e){
@@ -140,15 +151,16 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 
 	@Transactional
 	@Override
-	public Map<Integer, String> mapClass(String level) {
+	public Map<Integer, String> mapClass(String level,String idCourse) {
 		List<Class>getList = myappdao.getDistinctList(Class.class);
 		Map<Integer,String>returnMap = new HashMap<>();
 		returnMap.put(0, "---------Select Class---------");
-		if(level!=null){
+		if(level!=null && !"0".equals(idCourse)){
 			if("Beginner".equals(level.trim())){
 				
 				for (Class item : getList) {
-					if("Beginner".equals(item.getClassLevel().trim()) && item.getStList().size() < item.getNumberOfSeats()){
+					if("Beginner".equals(item.getClassLevel().trim())&& item.getCourse().getIdCourse()== Integer.parseInt(idCourse)
+							&& item.getStList().size() < item.getNumberOfSeats()){
 						returnMap.put(item.getClassId(), item.getClassName());
 					}					
 				}
@@ -156,7 +168,8 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 			}else if("Intermediate".equals(level.trim())){
 				
 				for (Class item : getList) {
-					if("Intermediate".equals(item.getClassLevel().trim()) && item.getStList().size() < item.getNumberOfSeats()){
+					if("Intermediate".equals(item.getClassLevel().trim()) && item.getCourse().getIdCourse()== Integer.parseInt(idCourse)
+							&& item.getStList().size() < item.getNumberOfSeats()){
 						returnMap.put(item.getClassId(), item.getClassName());
 					}
 					
@@ -165,7 +178,8 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 			}else if("Advance".equals(level.trim())){
 				
 				for (Class item : getList) {
-					if("Advance".equals(item.getClassLevel().trim()) && item.getStList().size() < item.getNumberOfSeats()){
+					if("Advance".equals(item.getClassLevel().trim()) && item.getCourse().getIdCourse()== Integer.parseInt(idCourse)
+							&& item.getStList().size() < item.getNumberOfSeats()){
 						returnMap.put(item.getClassId(), item.getClassName());
 					}
 					
@@ -314,7 +328,21 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 
 	@Transactional
 	@Override
-	public void deleteStudent(Student student) {
+	public void deleteStudent(Student student) {	
+	
+//		Class c = myappdao.getEntityById(Class.class, 1);
+//		Set<Student> sts = c.getStList();
+//		System.out.println(sts.size());
+
+		Set<Class> clist = student.getClassOfStudent();		
+		System.out.println(clist.size());
+		
+		for(Iterator<Class> object = clist.iterator(); object.hasNext();){
+			Class cObject = object.next();
+			cObject.getStList().remove(student);
+			myappdao.insertOrUpdate(cObject);
+		}
+		
 		myappdao.deleteEntity(student);
 	}
 
@@ -333,9 +361,17 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 	@Override
 	public Map<String, String> mapGender() {
 		Map<String, String> mapGender = new HashMap<>();
-		mapGender.put("Female", "Female");
-		mapGender.put("Male", "Male");
+		mapGender.put("Female", "Nữ");
+		mapGender.put("Male", "Nam");
 		return mapGender;
+	}
+
+	@Override
+	public boolean isValidAccount(User account, String searchColum, String searchValue) {
+		if(myappdao.IsValidObject(account, searchColum , searchValue)){
+			 return true;	
+		}
+		return false;
 	}
 
 

@@ -1,12 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page session="true"%>
 
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>List Student</title>
 <%@include file="_link.jsp" %>
 <style type="text/css">
@@ -45,8 +45,8 @@
 				 	<div class="row  border-bottom white-bg dashboard-header">
 						<div class="col-xs-12 col-sm-12 col-md-12">
 							<div class="row">
-							  <div class="col-xs-10 col-sm-10 col-md-10"><h2>Full List Of Students in the System </h2></div>
-							  <div class="btn-add"><a href="${pageContext.request.contextPath}/addStudent"><input type="button" value="Add Student" class="btn btn-warning"/></a></div>		
+							  <div class="col-xs-10 col-sm-10 col-md-10"><h2>Full List Of Class in the System </h2></div>
+							  <div class="btn-add"><a href="${pageContext.request.contextPath}/admin/addStudent"><input type="button" value="Add Student" class="btn btn-warning"/></a></div>		
 							 </div>	 
 								<span id="message">${message}</span>
 						</div>						
@@ -62,8 +62,7 @@
 							    <th>Birthday</th>
 							    <th>Phone Number</th>
 							    <th>Email</th>
-							    <th>Address</th>	
-							    <th>Shool</th>						    
+							    <th>Class</th>							    
 							    <th>Action</th>
 							   </tr>
 							</thead>
@@ -76,8 +75,7 @@
 									<td>${list.dateOfBirth}</td>
 									<td>${list.phoneNumber}</td>
 									<td>${list.email}</td>
-									<td>${list.stAddress.city.cityName}</td>
-									<td>${list.school.schoolName}</td>
+									<td>12T</td>
 									<td> 
 									    <a href="#" role="button" class="btn"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> </a> 
 										<a href="#delBoxConfirm${list.studentId}" role="button" class="btn" data-toggle="modal">
@@ -96,7 +94,7 @@
 															<h2>Are You Sure ? </h2>
 														</div>
 														<div class="modal-footer"> 
-														<form class="delete-form" action="${pageContext.request.contextPath}/doDeleteStudent" method="get">
+														<form class="delete-form" action="doDelStudent" method="post">
 														   <input type="hidden" value="${list.studentId}"  name ="studentid" id ="studentid">														  
 															<button type="submit" class="btn btn-danger">
 																Yes

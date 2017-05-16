@@ -53,7 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //		        .passwordParameter("password")
 //		        .and().csrf();
 		
-		http.authorizeRequests().antMatchers("/", "/login").permitAll();	
+		http.authorizeRequests().antMatchers("/", "/login").access("permitAll");
+		
 		
 		http.authorizeRequests().antMatchers("/admin/**").access("hasAuthority('ADMIN')");
 		

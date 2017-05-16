@@ -1,6 +1,7 @@
 package com.nguyenvando.DaoImpl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -103,7 +104,6 @@ public class MyAppDaoImpl implements MyAppDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> List<T> getListByColumn(Class<T> entityClass, String searchColum, Integer searchValue) {
-		System.out.println("Truyeen xuongs:"+searchColum +" ->"+ searchValue);
 		Session session = sessionFactory.getCurrentSession();
 		ArrayList<T> result = new ArrayList<T>();
 		Criteria crit = session.createCriteria(entityClass) ;
@@ -114,5 +114,18 @@ public class MyAppDaoImpl implements MyAppDao{
 		}
 		return result ;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<T> getListBetween(Class<T> entityClass, String property, Date beginDate, Date endDate) {
+		List<T> result = new ArrayList<T>();
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(entityClass);
+		criteria.add(Restrictions.between(property,beginDate, endDate));
+		if(criteria.list()!=null) {
+			result=criteria.list();
+		}
+		return result;
+	}
+
 
 }

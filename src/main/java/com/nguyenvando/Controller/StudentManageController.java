@@ -13,10 +13,11 @@ public class StudentManageController {
 	@RequestMapping(value = "/home")
 	public ModelAndView studentPage() {
 		ModelAndView model = new ModelAndView();
+	
 		model.addObject("title", "Spring Security + Hibernate Example");
 		model.addObject("message", "This page is for STUDENT only!");
+	
 		model.setViewName("student");
-
 		return model;
 
 	}

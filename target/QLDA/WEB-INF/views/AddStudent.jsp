@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@taglib  prefix="form"   uri="http://www.springframework.org/tags/form"  %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page session="true"%>
@@ -7,7 +7,7 @@
 <html>
 <head>
 <title>Add Student</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
@@ -27,7 +27,6 @@
 	   }	
 	.row.border-bottom.white-bg.dashboard-header {
 	    background-color: lightgoldenrodyellow;
-	    min-height: 600px;
 	}  	
 	input#fullName,input#dateOfBirth,input#phoneNumber,input#email,select#district,select#city,
 	select#classOfST,input#userName,input#password,select#school{
@@ -137,7 +136,7 @@
 										<td>                                                       
 										   <div class="form-inline">
 									         <div class="form-group">  
-										         <form:select path="classOfST" class="form-control" id="mapClass">
+										         <form:select path="classOfST" class="form-control" id="classList">
 										         	<form:options items="${ClassMap}"/>									         
 										         </form:select>
 										     </div>
@@ -211,41 +210,43 @@
 									   </td>																				
 									   
 									</tr>
-										
+					
 									<tr>
 									   <td>
 											<div class="form-inline">                                   
 												<div class="form-group">                              
-													<label>City*</label>
+													<label>City</label>
 												</div>
 											</div>
 									   </td>
 									   <td>
 											<div class="form-inline">                                   
-												<div class="form-group">                              
-													<form:select path="city" class="form-control" >
-													  <form:options items="${cityMap}"/>
-													</form:select>
+												<div class="form-group">    
+												   <form:select path="city" class="form-control">
+												     <form:options items="${cityMap}"/>
+												   </form:select>                          													
 												</div>
 											</div>                                                                
 									   </td>
-									    <td>
+									   <td>
 											<div class="form-inline">                                   
 												<div class="form-group">                              
-													<label>School*</label>
+													<label>School</label>
 												</div>
 											</div>
 									   </td>
 									   <td>
 											<div class="form-inline">                                   
-												<div class="form-group">                              
-													<form:select path="school" class="form-control" >
-													  <form:options items="${schoolMap}"/>
-													</form:select>
+												<div class="form-group">    
+												   <form:select path="school" class="form-control">
+												     <form:options items="${schoolMap}"/>
+												   </form:select>                          													
 												</div>
 											</div>                                                                
-									   </td>									   
+									   </td>
+									   
 									</tr>
+					
 									<tr>
 									   <td>
 											<div class="form-inline">                                   
@@ -257,14 +258,13 @@
 									   <td>
 											<div class="form-inline">                                   
 												<div class="form-group">                              
-									                <form:select path="district" class="form-control" id="district">
-									                  <form:options items="${districtMap}"/>
-									                </form:select>				              					              
+													<form:select path="district" class="form-control" id="district">
+													 <form:options items="${districtMap}"/>
+													</form:select>
 												</div>
 											</div>                                                                
 									   </td>
-									   
-									</tr>									
+									</tr>
 					                          
 					               <!--  End Address Table -->      
 					            
@@ -300,7 +300,6 @@
 				dateOfBirth :  "required",
 				phoneNumber : "required",
 				email: "required",
-				userName: "required",
 				password : "required"
 			},
 			messages:{				
@@ -308,100 +307,103 @@
 				dateOfBirth:  "Enter your's birthday",
 				phoneNumber: "Enter Phone Number",
 				email : "Enter Student email ",
-				userName : "Enter username ",
 				password: "Enter your's password"
 			}
 			
 		});
 	 
-	 
-	 $("input#stLevel1").click(function() {
-			var data = $('input#stLevel1').val();
-			var myContextPath = "${pageContext.request.contextPath}";
-			$.ajax({
-				type : "GET",
-				contentType : 'application/json; charset=utf-8',
-				dataType : 'json',
-				url : myContextPath + "/changeClassList?data=" + data,
-				success : function(data) {
-					// alert(JSON.stringify(data));
-					var mapClass = document.getElementById('mapClass');
-					$(mapClass).empty();
-					for (i in data) {
-				   	 $(mapClass).append('<option  value=' +i+ '>' + data[i] + '</option>');
-				    }
-				},
-				done : function(e) {
-					console.log("DONE");
-				}
-			});
-		 });	 
-	 $("input#stLevel2").click(function(){
-		 var data = $('input#stLevel2').val();
-			var myContextPath = "${pageContext.request.contextPath}";
-			$.ajax({
-				type : "GET",
-				contentType : 'application/json; charset=utf-8',
-				dataType : 'json',
-				url : myContextPath + "/changeClassList?data=" + data,
-				success : function(data) {
-					// alert(JSON.stringify(data));
-					var mapClass = document.getElementById('mapClass');
-					$(mapClass).empty();
-					for (i in data) {
-				   	 $(mapClass).append('<option  value=' +i+ '>' + data[i] + '</option>');
-				    }
-				},
-				done : function(e) {
-					console.log("DONE");
-				}
-			});
-	 });
-	 $("input#stLevel3").click(function(){
-		var data = $('input#stLevel3').val();
+	 $("select#city").change(function () {
+		var data = $('select#city').val();
 		var myContextPath = "${pageContext.request.contextPath}";
 		$.ajax({
 			type : "GET",
-			contentType : 'application/json; charset=utf-8',
+			contentType : 'application/json; charset=UTF-8',
 			dataType : 'json',
-			url : myContextPath + "/changeClassList?data=" + data,
+			url : myContextPath + "/admin/ChangeDistrictList?data=" + data,
 			success : function(data) {
-				// alert(JSON.stringify(data));
-				var mapClass = document.getElementById('mapClass');
-				$(mapClass).empty();
+				var district = document.getElementById('district');
+				 $(district).empty();
 				for (i in data) {
-			   	 $(mapClass).append('<option  value=' +i+ '>' + data[i] + '</option>');
+			   	 $(district).append('<option  value=' +i+ '>' + data[i] + '</option>');
 			    }
+				
 			},
 			done : function(e) {
 				console.log("DONE");
 			}
 		});
-	 });
+
+	});
 	 
-	 $("select#city").change(function() {
-			var data = $('select#city').val();
-			var myContextPath = "${pageContext.request.contextPath}";
-			$.ajax({
-				type : "GET",
-				contentType : 'application/json; charset=utf-8',
-				dataType : 'json',
-				url : myContextPath + "/ChangeDistrictList?data=" + data,
-				success : function(data) {
-					// alert(JSON.stringify(data));
-					var district = document.getElementById('district');
-					$(district).empty();
-					for (i in data) {
-				   	 $(district).append('<option  value=' +i+ '>' + data[i] + '</option>');
-				    }
-				},
-				done : function(e) {
-					console.log("DONE");
-				}
-			});
-		 });	 	 
-	 
-	 $('#message').css({"color":"#009966","font-size":"13px"}).fadeOut(6000);
+	$("input#stLevel1").click(function () {
+		var data = $('input#stLevel1').val();
+		var myContextPath = "${pageContext.request.contextPath}";
+		$.ajax({
+			type : "GET",
+			contentType : 'application/json; charset=UTF-8',
+			dataType : 'json',
+			url : myContextPath + "/admin/changeClassList?data=" + data,
+			success : function(data) {
+				var classList = document.getElementById('classList');
+				 $(classList).empty();
+				for (i in data) {
+			   	 $(classList).append('<option  value=' +i+ '>' + data[i] + '</option>');
+			    }
+				
+			},
+			done : function(e) {
+				console.log("DONE");
+			}
+		});
+		
+	});
+	
+	$("input#stLevel2").click(function () {
+		var data = $('input#stLevel2').val();
+		var myContextPath = "${pageContext.request.contextPath}";
+		$.ajax({
+			type : "GET",
+			contentType : 'application/json; charset=UTF-8',
+			dataType : 'json',
+			url : myContextPath + "/changeClassList?data=" + data,
+			success : function(data) {
+				var classList = document.getElementById('classList');
+				 $(classList).empty();
+				for (i in data) {
+			   	 $(classList).append('<option  value=' +i+ '>' + data[i] + '</option>');
+			    }
+				
+			},
+			done : function(e) {
+				console.log("DONE");
+			}
+		});
+	});
+	
+	$("input#stLevel3").click(function () {
+		var data = $('input#stLevel3').val();
+		var myContextPath = "${pageContext.request.contextPath}";
+		$.ajax({
+			type : "GET",
+			contentType : 'application/json; charset=UTF-8',
+			dataType : 'json',
+			url : myContextPath + "/changeClassList?data=" + data,
+			success : function(data) {
+				var classList = document.getElementById('classList');
+				 $(classList).empty();
+				for (i in data) {
+			   	 $(classList).append('<option  value=' +i+ '>' + data[i] + '</option>');
+			    }
+				
+			},
+			done : function(e) {
+				console.log("DONE");
+			}
+		});
+	});
+	 	
+	
+	 $('#message').css({"color":"#009966","font-size":"13px"}).fadeOut(4000);
 	 $('.errorMessage').css({"color":"red","font-size":"20px"}).fadeOut(6000);
 	 $('.msgerror').css({"color":"red","font-size":"12px"}).fadeOut(6000);
 	 

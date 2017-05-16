@@ -4,6 +4,8 @@
 package com.nguyenvando.Entities;
 
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,7 +25,7 @@ import javax.persistence.Table;
 public class SchoolFee {
 	
 	private Integer feeId;
-	private String datePaid;
+	private Date datePaid;
 	private float feeValue;
 	private float remain;
 	private Student student ;
@@ -44,11 +46,11 @@ public class SchoolFee {
 	}
 
 	@Column(name="datePaid",nullable = false)
-	public String getDatePaid() {
+	public Date getDatePaid() {
 		return datePaid;
 	}
 
-	public void setDatePaid(String datePaid) {
+	public void setDatePaid(Date datePaid) {
 		this.datePaid = datePaid;
 	}
 
@@ -70,8 +72,8 @@ public class SchoolFee {
 		this.remain = remain;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "studentId", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "studentId", nullable = true)
 	public Student getStudent() {
 		return student;
 	}

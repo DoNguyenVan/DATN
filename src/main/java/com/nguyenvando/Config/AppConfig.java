@@ -2,7 +2,6 @@ package com.nguyenvando.Config;
 
 import java.util.Properties;
 
-import javax.servlet.MultipartConfigElement;
 
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.hibernate.SessionFactory;
@@ -14,7 +13,6 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -48,6 +46,9 @@ public class AppConfig {
         Properties prop = new Properties();
         prop.put("hibernate.format_sql", "true");
         prop.put("hibernate.show_sql", "true");
+        prop.put("hibernate.connection.useUnicode","true");
+        prop.put("hibernate.connection.charSet", "UTF-8");
+        prop.put("hibernate.connection.characterEncoding", "UTF-8");
         prop.put("hibernate.dialect", "org.hibernate.dialect.SQLServer2008Dialect");
         return prop;
     }
@@ -57,7 +58,8 @@ public class AppConfig {
 		
 		BasicDataSource ds = new BasicDataSource();
 	    ds.setDriverClassName("net.sourceforge.jtds.jdbc.Driver");
-		ds.setUrl("jdbc:jtds:sqlserver://localhost:1433/test;instance=SQLEXPRESS");
+		ds.setUrl("jdbc:jtds:sqlserver://localhost:1433;useUnicode=true;characterEncoding=UTF-8;databaseName=test;instance=SQLEXPRESS");
+//		ds.setConnectionProperties("useUnicode=yes;characterEncoding=utf8;");
 		ds.setUsername("sa");
 		ds.setPassword("102120169");
 		return ds;

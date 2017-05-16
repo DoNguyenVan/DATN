@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@taglib  prefix="form"   uri="http://www.springframework.org/tags/form"  %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page session="true"%>
@@ -7,7 +7,7 @@
 <html>
 <head>
 <title>Add Teacher</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
@@ -62,7 +62,7 @@
 					    <h2>ADD NEW TEACHER</h2> 
 					    <span id="message">${message}</span>
 					   <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 Form_Teacher">                       
-					      <form:form  action ="${pageContext.request.contextPath}/doAddTeacher" enctype="multipart/form-data"
+					      <form:form  action ="${pageContext.request.contextPath}/admin/doAddTeacher" enctype="multipart/form-data"
 					        method="post" commandName="TeacherForm" id="addTeacherForm"> 
 					        
 					         <div class="row">
@@ -98,11 +98,13 @@
 					           <div class="col-xs-3 col-sm-3 col-md-3">
 					             <form:input path="phoneNumber" class="form-control"  type="number" placeholder="number"  
 					             onfocus="Focus(this)" onblur="Blur1(this)" />
+					              <label class="msgerror">${phoneformat}</label>
 					           </div>
 					           
 					           <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-xs-1 col-sm-1 col-md-1"><label>UserName*</label></div>
 					           <div class=" col-xs-3 col-sm-3 col-md-3">
 					             <form:input path="userName" class="form-control"/>
+					              <label class="msgerror">${validAccount}</label>
 					           </div>					           
 					         </div>
 					         
@@ -110,6 +112,7 @@
 					           <div class="col-xs-1 col-sm-1 col-md-2"><label>Email*</label></div>
 					           <div class="col-xs-3 col-sm-3 col-md-3">
 					             <form:input path="email" class="form-control"  type="email" placeholder="email@email.com"  />
+					               <label class="msgerror">${emailformat}</label>
 					           </div>
 					           
 					           <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-xs-1 col-sm-1 col-md-1"><label>password*</label></div>
@@ -150,7 +153,7 @@
 						            <td colspan="4" >                                                  
 									    <div class="form-inline">  
 											<input type="submit" class="btn btn-info" value="Submit"> 
-											<a href="${pageContext.request.contextPath}/listTeacher" class="btn btn-default" role="button">Cancel</a> 
+											<a href="${pageContext.request.contextPath}/admin/listTeacher" class="btn btn-default" role="button">Cancel</a> 
 										</div>  
 									</td>
 								</tr>

@@ -1,5 +1,6 @@
 package com.nguyenvando.Dao;
 
+import java.util.Date;
 import java.util.List;
 
 public interface MyAppDao {
@@ -21,5 +22,8 @@ public interface MyAppDao {
 	public <T> void deleteEntity(final T entity);
 	
 	public <T> long countAllEntities(Class<T> entityClass);
+	
+	public <T> List<T> getListBetween(Class<T> entityClass,String property, Date beginDate, Date endDate);
+	
 	
 }

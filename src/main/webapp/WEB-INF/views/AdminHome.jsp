@@ -20,7 +20,7 @@
 }
 #dashboard{
     background-color: #00ffcc;
-    width: 500px;
+    width: 430px;
     height: 400px;
     margin-bottom:1%;
 }
@@ -43,9 +43,9 @@
 				<!-- content -->   
 				<div class="row  border-bottom white-bg dashboard-header">
 					
-					<div class="col-xs-6 col-sm-6 col-md-6" id="dashboard">						
-						 <h1 class="col-xs-12 col-md-12 col-sm-12">Dashboards</h1>						   
-						   <a href="${pageContext.request.contextPath}/listClass">
+					<div class="col-xs-5 col-sm-5 col-md-5" id="dashboard">						
+						 <h1 class="col-xs-12 col-sm-12 col-md-12">Dashboards</h1>						   
+						   <a href="${pageContext.request.contextPath}/admin/listClass">
 								<div class="col-xs-6 col-sm-6 col-md-6" > 
 									<div class="widget lazur-bg p-xl">
 										<h2>Class</h2>
@@ -58,7 +58,7 @@
 								</div>
 							</a>
 						 
-						  <a href="${pageContext.request.contextPath}/listStudent">
+						  <a href="${pageContext.request.contextPath}/admin/listStudent">
 							<div class="col-xs-6 col-sm-6 col-md-6 "> 
 								<div class="widget lazur-bg p-xl">								
 									<h2>Student</h2>
@@ -70,7 +70,7 @@
 								</div>	
 							 </div>	
 						 </a>
-					    <a href="${pageContext.request.contextPath}/listTeacher">
+					    <a href="${pageContext.request.contextPath}/admin/listTeacher">
 								<div class="col-xs-6 col-sm-6 col-md-6" > 
 									<div class="widget lazur-bg p-xl">
 										<h2>Teacher</h2>
@@ -82,13 +82,13 @@
 									</div>	
 								</div>
 							</a>
-					    <a href="${pageContext.request.contextPath}/Finance">
+					    <a href="${pageContext.request.contextPath}/admin/Finance">
 								<div class="col-xs-6 col-sm-6 col-md-6" > 
 									<div class="widget lazur-bg p-xl">
 										<h2>Finance</h2>
 										<ul class="list-unstyled m-t-md">
 											<li class="pull-right">
-												Total ${classtotal}
+												
 											</li>
 										</ul>
 									</div>	
@@ -97,7 +97,7 @@
 						 	
 					</div> 							 
 								
-						<div class="col-xs-offset-1 col-xs-6 col-sm-offset-2 col-sm-6 col-md-offset-1 col-md-6" id="scrollSpace">	
+					<div class="col-xs-offset-1 col-xs-4 col-sm-offset-1 col-sm-4 col-md-offset-1 col-md-4" id="scrollSpace">	
 							<h1 class="col-xs-12 col-sm-12 col-md-12">Student Of class</h1>
 							<c:forEach items="${classList}" var="object">
 								<div class="col-xs-6 col-sm-6 col-md-6"> 

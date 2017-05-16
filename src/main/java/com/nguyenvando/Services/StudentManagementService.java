@@ -35,8 +35,9 @@ public interface StudentManagementService{
 	public void deleteStudent(Student student);
 	public boolean isPhoneFormat(String phone );
 	public boolean isValidEmail(Student st,String searchColum,String searchValue);
+	public boolean isValidAccount(User account,String searchColum,String searchValue);
 	public long countAllStudent();
-	public Map<Integer, String> mapClass(String level);
+	public Map<Integer, String> mapClass(String level,String idCourse);
 	public Map<Integer, String> mapCity();
 	public Map<Integer, String> mapDistrict(Integer cityId);
 	public Map<Integer, String> mapSchool();

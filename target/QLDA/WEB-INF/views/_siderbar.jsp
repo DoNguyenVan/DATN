@@ -1,9 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page session="true"%>
 
 <html>
 <head>
-<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="css/siderbar.css">
 </head>
 <body>
@@ -22,27 +24,31 @@
 				</li>
 				
 				<li>
-					<div class="menu-home"><a  href="${pageContext.request.contextPath}/AdminManagement">Home Management</a></div>
+					<div class="menu-home"><a  href="${pageContext.request.contextPath}/admin/AdminManagement">Home Management</a></div>
 				</li>                  
 		  
 				<li>
-					<div class="menu-checked"><a  href="${pageContext.request.contextPath}/Register">Class Registration</a></div>
+					<div class="menu-checked"><a  href="${pageContext.request.contextPath}/CheckAttendace">Check Attendance</a></div>
 				</li>
 		  
 				<li>
-					<div class="menu-student"><a  href="${pageContext.request.contextPath}/listStudent">Student Management</a></div>
+					<div class="menu-student"><a  href="${pageContext.request.contextPath}/admin/listStudent">Student Management</a></div>
 				</li>
    				
 				<li>
-				    <div class="menu-teacher"><a  href="${pageContext.request.contextPath}/listTeacher">Teacher Management</a></div>                    
+				    <div class="menu-teacher"><a  href="${pageContext.request.contextPath}/admin/listTeacher">Teacher Management</a></div>                    
 				</li>
 				
 				<li>
-				    <div class="menu-class"><a  href="${pageContext.request.contextPath}/listClass">Class Management</a></div>                    
+				    <div class="menu-class"><a  href="${pageContext.request.contextPath}/admin/listClass">Class Management</a></div>                    
 				</li>				
 				
 				<li>
-				    <div class="menu-finance"><a  href="${pageContext.request.contextPath}/Finance">Finance Management</a></div>                    
+				    <div class="menu-finance"><a  href="${pageContext.request.contextPath}/admin/Finance">Finance Management</a></div>                    
+				</li>
+				
+				<li>
+				    <div class="menu-finance"><a  href="${pageContext.request.contextPath}/test/test1">TEST</a></div>                    
 				</li>
 				
 		    

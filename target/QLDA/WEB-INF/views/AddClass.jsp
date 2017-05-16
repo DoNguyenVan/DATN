@@ -55,7 +55,7 @@
 			      <div class="col-xs-10 col-sm-10 col-md-10">
 			        <h2>ADD CLASS</h2>
 			         <label class="errorMessage">${errorMessage}</label>
-			          <form:form action="${pageContext.request.contextPath}/doAddClass" 
+			          <form:form action="${pageContext.request.contextPath}/admin/doAddClass" 
 			                     method="post" commandName="classForm" id="addClassForm">
 			              <table class="table table-striped" style="width: 60%;">			                
 			                

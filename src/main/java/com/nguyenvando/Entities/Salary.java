@@ -4,6 +4,8 @@
 package com.nguyenvando.Entities;
 
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,8 +26,8 @@ public class Salary {
 
 	private Integer salaryId;
 	private float money;
-	private String datePaid;
-	private boolean isPaid;
+	private Date datePaid;
+//	private boolean isPaid;
 	private Teacher teacher_Salary;
 
 	public Salary() {		
@@ -52,27 +54,29 @@ public class Salary {
 		this.money = money;
 	}
 
+
+	
+
+//	@Column(name="isPaid",nullable=true)
+//	public boolean isPaid() {
+//		return isPaid;
+//	}
+//
+//	public void setPaid(boolean isPaid) {
+//		this.isPaid = isPaid;
+//	}
+	
 	@Column(name="datePaid",nullable=false)
-	public String getDatePaid() {
+	public Date getDatePaid() {
 		return datePaid;
 	}
 
-	public void setDatePaid(String datePaid) {
+	public void setDatePaid(Date datePaid) {
 		this.datePaid = datePaid;
 	}
 
-	@Column(name="isPaid",nullable=true)
-	public boolean isPaid() {
-		return isPaid;
-	}
-
-	public void setPaid(boolean isPaid) {
-		this.isPaid = isPaid;
-	}
-	
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "teacherId", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "teacherId", nullable = true)
 	public Teacher getTeacher_Salary() {
 		return teacher_Salary;
 	}

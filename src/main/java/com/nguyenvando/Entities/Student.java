@@ -18,6 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 /**
  * @author Nguyen Van Do
  *
@@ -32,6 +35,7 @@ public class Student {
 	private String phoneNumber;
 	private String email;
 	private String studentLevel;
+	private String gender;
 	private Address stAddress;
 	private School school;
 	private User stAccount;
@@ -129,6 +133,7 @@ public class Student {
 	}
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "student")
+	@Fetch(value = FetchMode.SUBSELECT)
 	public Collection<SchoolFee> getFeePaidList() {
 		return feePaidList;
 	}
@@ -137,7 +142,12 @@ public class Student {
 		this.feePaidList = feePaidList;
 	}
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "stList")
+	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "stList")
+//	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//	@JoinTable(name = "CLASS_STUDENT", joinColumns = {
+//			@JoinColumn(name = "studentId", nullable = false, updatable = false) },
+//			inverseJoinColumns = { @JoinColumn(name = "classId",
+//					nullable = false, updatable = false) })
 	public Set<Class> getClassOfStudent() {
 		return classOfStudent;
 	}
@@ -158,5 +168,15 @@ public class Student {
 	public void setExamList(Collection<Examination> examList) {
 		this.examList = examList;
 	}
+
+	@Column(name="gender",nullable=true)
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	
 	
 }

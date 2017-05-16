@@ -3,6 +3,7 @@
  */
 package com.nguyenvando.Services;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +25,7 @@ import com.nguyenvando.Entities.Teacher;
 import com.nguyenvando.Entities.User;
 import com.nguyenvando.Entities.UserRole;
 import com.nguyenvando.Utils.TeacherFormAdd;
-
+import com.nguyenvando.Entities.Class;
 /**
  * @author Nguyen Van Do
  *
@@ -68,7 +69,8 @@ public class TeacherManagementServiceImpl implements TeacherManagementService {
 	public Teacher generateTeacher(TeacherFormAdd tc) {
 		Teacher teacher = new Teacher();
 		try{
-			teacher.setFullName(tc.getFullName());
+			byte[]bytes = tc.getFullName().getBytes(StandardCharsets.ISO_8859_1);
+			teacher.setFullName(new String(bytes,StandardCharsets.UTF_8));
 			teacher.setDateOfBirth(tc.getDateOfBirth());
 			teacher.setPhoneNumber(tc.getPhoneNumber());
 			teacher.setEmail(tc.getEmail());			
@@ -216,7 +218,12 @@ public class TeacherManagementServiceImpl implements TeacherManagementService {
 		Set<Skill> tcSkills = tc.getTcSkill();
 		for (Skill skill : tcSkills) {
 			myappdao.deleteEntity(skill);
-		}		
+		}	
+		Set<Class> tcClass = tc.getTcClassList();
+		for (Class cObject : tcClass) {
+			cObject.setTeacher(null);
+			myappdao.insertOrUpdate(cObject);
+		}
 		myappdao.deleteEntity(tc);
 	}
 

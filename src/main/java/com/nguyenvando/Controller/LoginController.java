@@ -58,7 +58,7 @@ public class LoginController {
 			model.addObject("msg", "You've been logged out successfully.");			
 		}
 		
-		model.setViewName("login1");
+		model.setViewName("login");
 
 		return model;
 
@@ -87,7 +87,7 @@ public class LoginController {
 		Collection<SimpleGrantedAuthority> roleCurrentUser = (Collection<SimpleGrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();		
 
 		if("[ADMIN]".equals(roleCurrentUser.toString().trim())){
-			return "redirect:/AdminManagement";
+			return "redirect:/admin/AdminManagement";
 		}
 		if("[STUDENT]".equals(roleCurrentUser.toString().trim())){
 			return "redirect:/student/home";

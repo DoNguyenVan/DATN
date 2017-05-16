@@ -1,12 +1,48 @@
 package com.nguyenvando.Utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
+import javax.faces.convert.ByteConverter;
+import javax.sound.sampled.AudioFormat.Encoding;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbookType;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.nguyenvando.Entities.Class;
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 public class MyAppUtil {
+	
+	public Date dateFormat(Date date,String format){
+		
+		return date;
+	}
 	
 	public  String Date_To_String(Date date){
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -16,6 +52,19 @@ public class MyAppUtil {
 	
 	public Date String_To_Date(String dateString){
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	      try {
+
+	         Date date =  formatter.parse(dateString);
+	         return date;
+
+	      } catch (Exception e) {
+	         return null;
+	      }
+
+	}
+	
+	public Date String_To_Date(String dateString,String dateFormat){
+		DateFormat formatter = new SimpleDateFormat(dateFormat);
 	      try {
 
 	         Date date =  formatter.parse(dateString);
@@ -55,5 +104,97 @@ public class MyAppUtil {
 		}
 		return false;
 	}
+	
+	public static void uploadFile(MultipartFile file,String path){
+		 try {
+			    InputStream inputStream = file.getInputStream();    
+			    if (inputStream == null)
+			     System.out.println("File inputstream is null");  
+			    // cach 2 - upload vao thu muc
+			    FileUtils.forceMkdir(new File(path));
+			    File upload = new File (path + file.getOriginalFilename());
+			    file.transferTo(upload);
+			    IOUtils.closeQuietly(inputStream);
+			   } catch (IOException ex) {
+			    System.out.println("Error saving uploaded file");
+			   }
+
+	}
+	
+
+	@SuppressWarnings({ "rawtypes", "unchecked", "resource" })
+	public static List<Class>readfileExcel(String filePath) throws IOException{
+	  List<Class> getList = new ArrayList<>();
+      List cellDataList = new ArrayList();
+      try {
+          /**
+           * Create a new instance for FileInputStream class
+           */
+          FileInputStream fileInputStream = new FileInputStream(filePath);
+
+          /**
+           * Create a new instance for POIFSFileSystem class
+           */
+          POIFSFileSystem fsFileSystem = new POIFSFileSystem(fileInputStream);
+
+          /*
+           * Create a new instance for HSSFWorkBook Class
+           */
+          HSSFWorkbook workBook = new HSSFWorkbook(fsFileSystem);
+           
+          for (int i = 0; i < workBook.getNumberOfSheets(); i++) {  
+               
+              HSSFSheet hssfSheet = workBook.getSheetAt(i);
+
+              /**
+               * Iterate the rows and cells of the spreadsheet to get all the
+               * datas.
+               */
+              Iterator rowIterator = hssfSheet.rowIterator();
+
+              while (rowIterator.hasNext()) {
+                  HSSFRow hssfRow = (HSSFRow) rowIterator.next();
+                  if(hssfRow.getRowNum()!=0){// cho nay code lai
+	                  Iterator iterator = hssfRow.cellIterator();
+	                  List cellTempList = new ArrayList();
+	                  while (iterator.hasNext()) {
+	                      HSSFCell hssfCell = (HSSFCell) iterator.next();
+	                      cellTempList.add(hssfCell);
+	                  }
+	                  cellDataList.add(cellTempList);
+                  }
+                  
+              }
+          } 
+           
+           
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+      /**
+       * Call the printToConsole method to print the cell data in the console.
+       */
+      printToConsole(cellDataList);
+	  
+	  return getList;
+	}
+	
+	 private static void printToConsole(List cellDataList) {
+		 for (int i = 0; i < cellDataList.size(); i++) {
+	            List cellTempList = (List) cellDataList.get(i);
+	            for (int j = 0; j < cellTempList.size(); j++) {
+	                HSSFCell hssfCell = (HSSFCell) cellTempList.get(j);
+//	                String s1 =" vccvsnjk";
+//	                byte[] decBytes1 = ByteConverter(hssfCell.toString().getBytes());
+//	                byte[]in =  .getBytes();
+//	                String out = new String(in,StandardCharsets.UTF_8);
+	                String stringCellValue = hssfCell.toString();
+	                System.out.print(stringCellValue + "\t");
+	            }
+	            System.out.println();
+	        }
+	    }
+	
+	
 	
 }

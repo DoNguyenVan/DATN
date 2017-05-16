@@ -39,4 +39,6 @@ public interface ClassManagementService {
 	public Course getCourseById(int id);
 	public Teacher getTeacherById(int id);
 	public Map<Integer, String> getTeachers();
+	public Map<Integer,String> getCourse();
+	public Map<Integer,Class> getClassByCourse(Integer courseId);
 }

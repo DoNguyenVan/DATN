@@ -62,12 +62,15 @@
 	td{
 	 text-align: center;
 	}
+	body {
+      background:url(../img/background.jpg);
+	}
  </style> 
  <link rel="stylesheet" href="css/style.css">
  <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
  <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
 </head>
-<body>
+<body >
 <div class="container-fruit">
 <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1  col-xs-10 col-sm-10 col-md-10">
   
@@ -77,10 +80,21 @@
     <li><a data-toggle="tab" href="#schedule"><span class="glyphicon glyphicon-time"> Schedule</span></a></li>
     <li><a data-toggle="tab" href="#exam"><span class="glyphicon glyphicon-book"> Score/Exam</span></a></li>
     <li><a data-toggle="tab" href="#schoolFee"><span class="glyphicon glyphicon-usd"> ShoolFee</span></a></li>
-    <li><a data-toggle="tab" href="#map"><span class="glyphicon glyphicon-map-marker"> Map/Direction</span></a></li>
     <li><a data-toggle="tab" href="#notify"><span class="glyphicon glyphicon-globe"> Notify</span></a></li>
+    <c:if test="${pageContext.request.userPrincipal.name != null}">
+    <li><a href="javascript:formSubmit()"><span class="glyphicon glyphicon-log-out"> Logout</span></a></li>
+	</c:if>
   </ul>
-
+	<c:url value="/logout" var="logoutUrl" />
+	<form action="${logoutUrl}" method="post" id="logoutForm">
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+	</form>
+  
+	<script>
+		function formSubmit() {
+			document.getElementById("logoutForm").submit();
+		}
+	</script>
  <div class="tab-content">
   <!-- Menu Profile -->
     <div id="profile" class="tab-pane fade in active">

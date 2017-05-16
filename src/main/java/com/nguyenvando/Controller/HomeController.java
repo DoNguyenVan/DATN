@@ -19,7 +19,7 @@ public class HomeController {
 	@Autowired
 	private StudentManagementService studentService;
 	
-	@RequestMapping(value = { "/"}, method = RequestMethod.GET)
+	@RequestMapping(value = {"/"}, method = RequestMethod.GET)
 	public ModelAndView defaultPage(Map<String,Object> map) {
 		ModelAndView model = new ModelAndView();
 		map.put("STF",new StudentFormAdd());
@@ -27,7 +27,7 @@ public class HomeController {
 		map.put("mapCity", studentService.mapCity());
 		map.put("mapDistrict", studentService.mapDistrict(0));
 		map.put("mapGender", studentService.mapGender());
-		model.setViewName("login1");
+		model.setViewName("login");
 		return model;
 	}
 

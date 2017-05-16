@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@taglib  prefix="form"   uri="http://www.springframework.org/tags/form"  %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page session="true"%>
@@ -7,12 +7,12 @@
 <html>
 <head>
 <title>Add Student</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
 <link rel="stylesheet" href="css/bootstrap.min.css">
-
+<link rel="stylesheet" href="css/selectBox.css">
 <style type="text/css">
  label.error {
 			 display:inline-block;
@@ -29,12 +29,12 @@
 	    background-color: lightgoldenrodyellow;
 	}  	
 	input#fullName,input#dateOfBirth,input#phoneNumber,input#email,select#district,select#city,
-	select#classOfST,input#userName,input#password,select#school{
+	select#classList,input#userName,input#password,select#school{
 	 width: 200px;
 	 height:35px; 
 	} 
 	div#Group-Level {
-    font-size: 0.7em;
+    font-size: 0.6em;
     font-family: initial;
     font-style: inherit;
 	}
@@ -69,12 +69,24 @@
 
 				<!-- content -->   	
 					<div class="row  border-bottom white-bg dashboard-header">
-					    <h2>ADD NEW STUDENT</h2> 
-					    <span id="message">${message}</span>
-					    <hr>
+					  <div class="row"> 
+					   <div class="col-xs-4 col-sm-4 col-md-4"><h2>ADD NEW STUDENT</h2></div> 
+					   <div class="col-xs-offset-3 col-sm-offset-3 col-md-offset-3 col-md-2"><label>Search by Course:</label></div>
+					   <div class="col-xs-5 col-sm-5 col-md-5 dropdown">
+					     <form:form commandName="search_course">
+							<form:select path="couseId" class="dropdown-select" >
+							   <form:options items="${listCourse}" />
+							</form:select>								
+						 </form:form>
+
+					   </div>
+					   </div>
+					   <span id="message">${message}</span>
+
+			    
 					    <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-xs-10 col-sm-10 col-md-10">
 					                                 
-					        <form:form  action ="${pageContext.request.contextPath}/doAddStudent" 
+					     <form:form  action ="${pageContext.request.contextPath}/admin/doAddStudent" 
 					        method="post" commandName="StudentForm" id="addStudentForm"> 
 					          <table class ="table">
 					             <tr>   			                   
@@ -93,21 +105,21 @@
 									  </div>
 									</td> 
 									<td>
-									   <div class="form-inline">                                   
-										  <div class="form-group">                              
-											<label>Student Level</label>
-										  </div>
-									   </div>  
-									</td>
-									<td>
 										<div class="form-inline">                                   
-											<div class="form-group" id="Group-Level">                              
-												<form:radiobuttons path="stLevel" items="${classLevel}" class="radiobtn"/>
+											<div class="form-group">                              
+												<label>Gender</label>
 											</div>
 										</div>  
-									</td>                                                                   										                                                                      
+									</td>
+										<td>
+											<div class="form-inline">                                   
+												<div class="form-group" id="Group-Level">                              
+													<form:radiobutton path="gender" value="Female" label="Nữ" class="radiobtn"/>
+													<form:radiobutton path="gender" value="Male" label="Nam" class="radiobtn"/>
+												</div>
+											</div>  
+										</td>                                                                   										                                                                      
 					               </tr>
-					
 									<tr>
 										<td>
 											<div class="form-inline">
@@ -126,24 +138,23 @@
 											 </div>
 										 </div> 
 									   </td>	
-									   <td>
-										  <div class="form-inline">                                   
-											<div class="form-group">                              
-												<label>Class* </label>
-											</div>
-										  </div>
-										</td>	
-										<td>                                                       
-										   <div class="form-inline">
-									         <div class="form-group">  
-										         <form:select path="classOfST" class="form-control" id="classList">
-										         	<form:options items="${ClassMap}"/>									         
-										         </form:select>
-										     </div>
-											</div>                                   
-										</td>																	
+										<td>
+										   <div class="form-inline">                                   
+											  <div class="form-group">                              
+												<label>Student Level</label>
+											  </div>
+										   </div>  
+										</td>
+										<td>
+											<div class="form-inline">                                   
+												<div class="form-group" id="Group-Level">                              
+													<form:radiobutton path="stLevel" value="Beginner" label="Beginner" class="radiobtn"/>
+													<form:radiobutton path="stLevel" value="Intermediate" label="Intermediate" class="radiobtn"/>
+													<form:radiobutton path="stLevel" value="Advance" label="Advance" class="radiobtn"/>
+												</div>
+											</div>  
+										</td> 									   
 									</tr>
-					
 									<tr>
 										<td>
 										    <div class="form-inline">                                   
@@ -161,22 +172,23 @@
 												</div>
 											</div>                             
 										 </td>																											
-										 <td>
-											<div class="form-inline">                                   
-												<div class="form-group">                              
-													<label>Account* </label>
-												</div>
+									   <td>
+										  <div class="form-inline">                                   
+											<div class="form-group">                              
+												<label>Class* </label>
 											</div>
+										  </div>
+										</td>	
+										<td>                                                       
+										   <div class="form-inline">
+									         <div class="form-group">  
+										         <form:select path="classOfST" class="form-control" id="classList">
+										         	<form:options items="${ClassMap}"/>									         
+										         </form:select>
+										     </div>
+											</div>                                   
 										</td>
-										<td>
-											<div class="form-inline">                                   
-												<div class="form-group">                              
-													<form:input  path="userName" class="form-control"  type="text" placeholder="account" />																					    
-												</div>
-											</div>                            
-									   </td>																				
 									</tr>
-					
 									<!--  Address Table -->
 									<tr>									   
 									   <td>
@@ -197,18 +209,17 @@
 										 <td>
 											<div class="form-inline">                                   
 												<div class="form-group">                              
-													<label>Password* </label>
+													<label>Account* </label>
 												</div>
 											</div>
 										</td>
 										<td>
 											<div class="form-inline">                                   
 												<div class="form-group">                              
-													<form:input  path="password" class="form-control"  type="password" placeholder="*******" />												    
+													<form:input  path="userName" class="form-control"  type="text" placeholder="account" />																					    
 												</div>
 											</div>                            
-									   </td>																				
-									   
+									   </td>										   
 									</tr>
 					
 									<tr>
@@ -228,23 +239,20 @@
 												</div>
 											</div>                                                                
 									   </td>
-									   <td>
+										 <td>
 											<div class="form-inline">                                   
 												<div class="form-group">                              
-													<label>School</label>
+													<label>Password* </label>
 												</div>
 											</div>
-									   </td>
-									   <td>
+										</td>
+										<td>
 											<div class="form-inline">                                   
-												<div class="form-group">    
-												   <form:select path="school" class="form-control">
-												     <form:options items="${schoolMap}"/>
-												   </form:select>                          													
+												<div class="form-group">                              
+													<form:input  path="password" class="form-control"  type="password" placeholder="*******" />												    
 												</div>
-											</div>                                                                
-									   </td>
-									   
+											</div>                            
+									   </td>									   
 									</tr>
 					
 									<tr>
@@ -264,14 +272,29 @@
 												</div>
 											</div>                                                                
 									   </td>
-									</tr>
-					                          
+									   <td>
+											<div class="form-inline">                                   
+												<div class="form-group">                              
+													<label>School</label>
+												</div>
+											</div>
+									   </td>
+									   <td>
+											<div class="form-inline">                                   
+												<div class="form-group">    
+												   <form:select path="school" class="form-control">
+												     <form:options items="${schoolMap}"/>
+												   </form:select>                          													
+												</div>
+											</div>                                                                
+									   </td>									   
+									</tr>														                          
 					               <!--  End Address Table -->      
 					            
 					            <tr><td colspan="4" >                                                  
 							    <div class="form-inline">  
 									<input type="submit" class="btn btn-info" value="Submit"> 
-									<a href="${pageContext.request.contextPath}/listStudent" class="btn btn-default" role="button">Cancel</a> 
+									<a href="${pageContext.request.contextPath}/admin/listStudent" class="btn btn-default" role="button">Cancel</a> 
 								</div>  
 								</td>
 								</tr>
@@ -300,6 +323,7 @@
 				dateOfBirth :  "required",
 				phoneNumber : "required",
 				email: "required",
+				gender: "required",
 				password : "required"
 			},
 			messages:{				
@@ -307,6 +331,7 @@
 				dateOfBirth:  "Enter your's birthday",
 				phoneNumber: "Enter Phone Number",
 				email : "Enter Student email ",
+				gender : "Choose one ",
 				password: "Enter your's password"
 			}
 			
@@ -317,9 +342,9 @@
 		var myContextPath = "${pageContext.request.contextPath}";
 		$.ajax({
 			type : "GET",
-			contentType : 'application/json; charset=utf-8',
+			contentType : 'application/json; charset=UTF-8',
 			dataType : 'json',
-			url : myContextPath + "/ChangeDistrictList?data=" + data,
+			url : myContextPath + "/admin/ChangeDistrictList?data=" + data,
 			success : function(data) {
 				var district = document.getElementById('district');
 				 $(district).empty();
@@ -337,12 +362,14 @@
 	 
 	$("input#stLevel1").click(function () {
 		var data = $('input#stLevel1').val();
+		var data2 = $('select#couseId').val();
+		var data3 = [data, data2];
 		var myContextPath = "${pageContext.request.contextPath}";
 		$.ajax({
 			type : "GET",
-			contentType : 'application/json; charset=utf-8',
+			contentType : 'application/json; charset=UTF-8',
 			dataType : 'json',
-			url : myContextPath + "/changeClassList?data=" + data,
+			url : myContextPath + "/myAPI/changeClassList?data=" + data3,
 			success : function(data) {
 				var classList = document.getElementById('classList');
 				 $(classList).empty();
@@ -363,9 +390,9 @@
 		var myContextPath = "${pageContext.request.contextPath}";
 		$.ajax({
 			type : "GET",
-			contentType : 'application/json; charset=utf-8',
+			contentType : 'application/json; charset=UTF-8',
 			dataType : 'json',
-			url : myContextPath + "/changeClassList?data=" + data,
+			url : myContextPath + "/myAPI/changeClassList?data=" + data,
 			success : function(data) {
 				var classList = document.getElementById('classList');
 				 $(classList).empty();
@@ -385,9 +412,9 @@
 		var myContextPath = "${pageContext.request.contextPath}";
 		$.ajax({
 			type : "GET",
-			contentType : 'application/json; charset=utf-8',
+			contentType : 'application/json; charset=UTF-8',
 			dataType : 'json',
-			url : myContextPath + "/changeClassList?data=" + data,
+			url : myContextPath + "/myAPI/changeClassList?data=" + data,
 			success : function(data) {
 				var classList = document.getElementById('classList');
 				 $(classList).empty();
@@ -403,14 +430,62 @@
 	});
 	 	
 	
-	 $('#message').css({"color":"#009966","font-size":"13px"}).fadeOut(4000);
+	 $('#message').css({"color":"#009966","font-size":"13px"}).fadeOut(6000);
 	 $('.errorMessage').css({"color":"red","font-size":"20px"}).fadeOut(6000);
 	 $('.msgerror').css({"color":"red","font-size":"12px"}).fadeOut(6000);
 	 
 	 $("input#email").change(function() {
 		 $('input#userName').val($('input#email').val());
 		});
-	});
+	 
+		// seach by Course
+	 $("select#couseId").change(function () {
+			var data = $('select#couseId').val();
+			var myContextPath = "${pageContext.request.contextPath}";
+				$.ajax({
+					type : "GET",
+					contentType : 'application/json; charset=UTF-8',
+					dataType : 'json',						
+					url : myContextPath + "/myAPI/ChangeClassTable?data="+data,
+					success : function(data) {
+					//	alert(JSON.stringify(data));
+						var classList = document.getElementById('classList');
+						$(classList).empty();						 
+						for (i in data) {
+						   	 $(classList).append('<option  value=' +data[i].classId+ '>' + data[i].className + '</option>');
+						    }
+						$("input#stLevel1").click(function () {
+							$(classList).empty();						 
+							for (i in data) {
+								if(data[i].classLevel=='Beginner')
+							   	 $(classList).append('<option  value=' +data[i].classId+ '>' + data[i].className + '</option>');
+							  }														
+						});
+						$("input#stLevel2").click(function () {
+							$(classList).empty();						 
+							for (i in data) {
+								if(data[i].classLevel=='Intermediate')
+							   	 $(classList).append('<option  value=' +data[i].classId+ '>' + data[i].className + '</option>');
+							  }														
+						});
+						$("input#stLevel3").click(function () {
+							$(classList).empty();						 
+							for (i in data) {
+								if(data[i].classLevel=='Advance')
+							   	 $(classList).append('<option  value=' +data[i].classId+ '>' + data[i].className + '</option>');
+							  }														
+						});
+
+						
+					},
+					done : function(e) {
+						console.log("DONE");
+					}				  			
+		});
+
+	}); 
+	 
+ });
  </script> 
  <!-- ------------------------------------------------------------- -->
 <script type="text/javascript">

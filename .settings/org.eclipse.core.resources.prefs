@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
 encoding//src/main/java/com/nguyenvando/Config/HibernateGenarateTablesConfig.java=UTF-8
 encoding//src/main/java/com/nguyenvando/Controller/AdminManageController.java=UTF-8
+encoding//src/main/java/com/nguyenvando/Utils/MyAppUtil.java=UTF-8
+encoding//src/main/java/com/nguyenvando/Utils/myTEST.java=UTF-8
 encoding//src/main/webapp/WEB-INF/assets/views/AddStudent.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/views/Finance.jsp=UTF-8

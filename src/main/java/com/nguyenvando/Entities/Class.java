@@ -115,7 +115,7 @@ public class Class {
 		this.fee = fee;
 	}
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "CLASS_STUDENT", joinColumns = {
 			@JoinColumn(name = "classId", nullable = false, updatable = false) },
 			inverseJoinColumns = { @JoinColumn(name = "studentId",

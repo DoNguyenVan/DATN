@@ -137,7 +137,7 @@ public class ClassManagementServiceImpl implements ClassManagementService{
 	
 	@Transactional
 	@Override
-	public void saveorupdate(Class classObject) {
+	public void saveorupdate(Class classObject) {				
 		myappdao.insertOrUpdate(classObject);
 	}
 
@@ -219,6 +219,7 @@ public class ClassManagementServiceImpl implements ClassManagementService{
 			classObject.setCourse(course);
 			if(teacher!=null){
 				classObject.setTeacher(teacher);
+				teacher.getTcClassList().add(classObject);
 			}	
 			return classObject;
 		}catch(Exception e){
@@ -265,6 +266,58 @@ public class ClassManagementServiceImpl implements ClassManagementService{
 			returnList.add(Object);
 		}
 		return returnList;
+	}
+
+	@Transactional
+	@Override
+	public Map<Integer, String> getCourse() {
+		List<Course> getList = myappdao.getList(Course.class);
+		Map<Integer,String> courses = new HashMap<>();
+		courses.put(0, "----Courses---");
+		for (Course course : getList) {
+			courses.put(course.getIdCourse(), course.getCourseName());
+		}
+		return courses;
+	}
+
+	@Transactional
+	@Override
+	public Map<Integer, Class> getClassByCourse(Integer courseId) {
+		
+		List<Class> getList = myappdao.getList(Class.class);
+		Map<Integer, Class> returnList = new HashMap<>();
+		int i=0; 
+		for (Class class1 : getList) {	
+			
+			if(courseId!=0){
+				if(class1.getCourse()!=null){
+					if(class1.getCourse().getIdCourse() == courseId){
+						Class c = new Class();
+						c.setClassId(class1.getClassId());
+						c.setClassName(class1.getClassName());
+						c.setStartDate(class1.getStartDate());
+						c.setNumberOfSeats(class1.getNumberOfSeats());
+						c.setClassLevel(class1.getClassLevel());
+						c.setFee(class1.getFee());
+						returnList.put(i,c);
+					}
+				}
+				
+			}else{
+				Class c = new Class();
+				c.setClassId(class1.getClassId());
+				c.setClassName(class1.getClassName());
+				c.setStartDate(class1.getStartDate());
+				c.setNumberOfSeats(class1.getNumberOfSeats());
+				c.setClassLevel(class1.getClassLevel());
+				c.setFee(class1.getFee());
+				returnList.put(i,c);
+			}
+			i++;
+			
+		}
+		return returnList;
+				
 	}
 
 }
