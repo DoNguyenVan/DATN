@@ -2,19 +2,16 @@ package com.nguyenvando.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.faces.convert.ByteConverter;
-import javax.sound.sampled.AudioFormat.Encoding;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -23,18 +20,11 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbookType;
+import org.apache.poi.util.SystemOutLogger;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nguyenvando.Entities.Class;
+import com.nguyenvando.Entities.Course;
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 public class MyAppUtil {
@@ -105,6 +95,8 @@ public class MyAppUtil {
 		return false;
 	}
 	
+	
+
 	public static void uploadFile(MultipartFile file,String path){
 		 try {
 			    InputStream inputStream = file.getInputStream();    
@@ -125,36 +117,36 @@ public class MyAppUtil {
 	@SuppressWarnings({ "rawtypes", "unchecked", "resource" })
 	public static List<Class>readfileExcel(String filePath) throws IOException{
 	  List<Class> getList = new ArrayList<>();
-      List cellDataList = new ArrayList();
-      try {
-          /**
-           * Create a new instance for FileInputStream class
-           */
-          FileInputStream fileInputStream = new FileInputStream(filePath);
+     List cellDataList = new ArrayList();
+     try {
+         /**
+          * Create a new instance for FileInputStream class
+          */
+         FileInputStream fileInputStream = new FileInputStream(filePath);
 
-          /**
-           * Create a new instance for POIFSFileSystem class
-           */
-          POIFSFileSystem fsFileSystem = new POIFSFileSystem(fileInputStream);
+         /**
+          * Create a new instance for POIFSFileSystem class
+          */
+         POIFSFileSystem fsFileSystem = new POIFSFileSystem(fileInputStream);
 
-          /*
-           * Create a new instance for HSSFWorkBook Class
-           */
-          HSSFWorkbook workBook = new HSSFWorkbook(fsFileSystem);
-           
-          for (int i = 0; i < workBook.getNumberOfSheets(); i++) {  
-               
-              HSSFSheet hssfSheet = workBook.getSheetAt(i);
+         /*
+          * Create a new instance for HSSFWorkBook Class
+          */
+         HSSFWorkbook workBook = new HSSFWorkbook(fsFileSystem);
+          
+         for (int i = 0; i < workBook.getNumberOfSheets(); i++) {  
+              
+             HSSFSheet hssfSheet = workBook.getSheetAt(i);
 
-              /**
-               * Iterate the rows and cells of the spreadsheet to get all the
-               * datas.
-               */
-              Iterator rowIterator = hssfSheet.rowIterator();
+             /**
+              * Iterate the rows and cells of the spreadsheet to get all the
+              * datas.
+              */
+             Iterator rowIterator = hssfSheet.rowIterator();
 
-              while (rowIterator.hasNext()) {
-                  HSSFRow hssfRow = (HSSFRow) rowIterator.next();
-                  if(hssfRow.getRowNum()!=0){// cho nay code lai
+             while (rowIterator.hasNext()) {
+                 HSSFRow hssfRow = (HSSFRow) rowIterator.next();
+                 if(hssfRow.getRowNum()!=0){// cho nay code lai
 	                  Iterator iterator = hssfRow.cellIterator();
 	                  List cellTempList = new ArrayList();
 	                  while (iterator.hasNext()) {
@@ -162,19 +154,58 @@ public class MyAppUtil {
 	                      cellTempList.add(hssfCell);
 	                  }
 	                  cellDataList.add(cellTempList);
-                  }
-                  
-              }
-          } 
-           
-           
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
-      /**
-       * Call the printToConsole method to print the cell data in the console.
-       */
-      printToConsole(cellDataList);
+                 }
+                 
+             }
+         } 
+          
+          
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+     /**
+      * Call the printToConsole method to print the cell data in the console.
+      */
+   //  printToConsole(cellDataList);
+     
+     // generate class list
+	 for (int i = 0; i < cellDataList.size(); i++) {
+         List cellTempList = (List) cellDataList.get(i);
+         Class cObject = new Class();
+         for (int j = 0; j < cellTempList.size(); j++) {
+             HSSFCell hssfCell = (HSSFCell) cellTempList.get(j);
+             String stringCellValue = hssfCell.toString();
+             System.out.print(stringCellValue + "\t");
+             switch (j) {
+			case 0:
+				cObject.setClassName(stringCellValue);
+				break;
+			case 1: 
+				cObject.setStartDate(stringCellValue);
+				break;
+			case 2: 
+				cObject.setNumberOfSeats((int) Math.round(Double.parseDouble(stringCellValue)));
+				break;
+			case 3: 
+				cObject.setClassLevel(stringCellValue);
+				break;
+			case 4: 
+				cObject.setFee(Float.parseFloat(stringCellValue));
+				cObject.setFeeRemain(Float.parseFloat(stringCellValue));
+				break;
+			case 5: 
+				Course course = new Course();
+				
+				break;
+			default:		
+				break;
+			}
+         }
+         System.out.println();
+         getList.add(cObject);
+     }
+
+     
 	  
 	  return getList;
 	}

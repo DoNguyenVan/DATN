@@ -1,11 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib  prefix="form"   uri="http://www.springframework.org/tags/form"  %>
 <%@page session="true"%>
 <html>
 <head>
- <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <title>Login</title>
  <%@include file="_link.jsp" %>
  <style type="text/css">
@@ -43,7 +43,7 @@
 	  height: 80%;
 	  margin-bottom: 1%;
 	}
-	div#row0,div#row1,div#row2,div#row3,div#row4,div#row5,div#row6{
+	div#row1,div#row2,div#row3,div#row4,div#row5,div#row6{
 	  margin-bottom: 2%;
 	}
 	div#row6{
@@ -82,28 +82,16 @@
    <div class="row" id="CreateStudent_Form">
       <div class="col-xs-offset-5 col-sm-offset-5 col-md-offset-5 col-xs-7 col-sm-7 col-md-7 pull-right">
           <div class="row">
-            <div class="col-xs-10 col-sm-10 col-md-10"><h3>CREATE NEW STUDENT/PUPIL</h3></div> 
+            <div class="col-xs-10 col-sm-10 col-md-10"><h3>CREATE NEW STUDENT/PUPIL</h3></div>           
           </div>  
-         <form:form id="addStudentForm" action ="${pageContext.request.contextPath}/do" method="post" commandName="STF" >                 
+           <c:if test="${!empty msg_info}"><span id="msg_info" >${msg_info}</span></c:if>
+         <form:form id="addStudentForm" action ="${pageContext.request.contextPath}/doAddStudentFormLogin" method="post" commandName="STF" >                 
           <div id="STUDENT">
-	          <div class="row">
-	            <div class="col-xs-10 col-sm-10 col-md-10">
-	              <h6>Choose Student or Pupil before create new account</h6>
-				</div> 
-	          </div>
-          	  <div id="row0">
-		          <div class="row">
-		            <div class="col-xs-5 col-sm-5 col-md-5">
-		              <input type="radio" name="st_type" value="pupil"><label>Pupil</label>
-		              <input type="radio" name="st_type" value="student" checked="checked"><label>Student</label>
-		            </div>
-		          </div>	          
-	         </div> 
            
 	         <div id="row1">
 		          <div class="row">
 		            <div class="col-xs-5 col-sm-5 col-md-5"><label>Full Name</label></div>
-		            <div class="col-xs-5 col-sm-5 col-md-5"><label>City</label></div>
+		            <div class="col-xs-5 col-sm-5 col-md-5"><label>City/Province</label></div>
 		          </div>
 		          <div class="row">
 		            <div class="col-xs-5 col-sm-5 col-md-5">
@@ -123,8 +111,9 @@
 		          </div>
 		          <div class="row">
 		            <div class="col-xs-5 col-sm-5 col-md-5">
-		               <form:input path="dateOfBirth"  type="date" class="form-control" placeholder="mm/dd/yyyy"/>
-		            </div>
+		               <form:input path="dateOfBirth"  type="date" class="form-control" placeholder="mm/dd/yyyy"/>	
+		               <c:if test="${!empty timeFuture}"><span id="timeFuture">${timeFuture}</span></c:if>	               
+		            </div>		            
 		            <div class="col-xs-5 col-sm-5 col-md-5">
 		              <form:select path="district" class="form-control">
 		               <form:options items="${mapDistrict}"/>
@@ -140,9 +129,12 @@
 		          <div class="row">
 		            <div class="col-xs-5 col-sm-5 col-md-5">
 		               <form:input path="phoneNumber"  type="number" class="form-control" placeholder="0978987876"/>
+		               <c:if test="${!empty format_phone}"><span id="format_phone">${format_phone}</span></c:if>
 		            </div>
 		            <div class="col-xs-5 col-sm-5 col-md-5">
 		               <form:input path="email"  type="email" class="form-control" placeholder="email@email.com"/>
+		               <c:if test="${!empty format_email}"><span id="format_email">${format_email}</span></c:if>
+		               <c:if test="${!empty valid_email}"><span id="valid_email">${valid_email}</span></c:if>
 					</div>
 	              </div>
 	         </div> 
@@ -153,14 +145,15 @@
 		          </div>
 		          <div class="row">
 		            <div class="col-xs-5 col-sm-5 col-md-5">
-		              <form:radiobuttons path="gender" items="${mapGender}"/>
-		            </div>
+		              <form:radiobuttons path="gender" items="${mapGender}"/>		              
+		            </div>		           
 		            <div class="col-xs-5 col-sm-5 col-md-5">
 		             <form:select path="school" class="form-control">
 		              <form:options items="${schoolMap}"/>
 		             </form:select>
 					</div>
 	              </div>
+	              <c:if test="${!empty gender}"><span id="msg_gender">${gender}</span></c:if>
 	         </div> 
 	         
 	         <div id="row5">
@@ -171,6 +164,7 @@
 		          <div class="row">
 		            <div class="col-xs-5 col-sm-5 col-md-5">
 		               <form:input path="userName"  type="text" class="form-control" placeholder="email@email.com"/>
+		               <c:if test="${!empty valid_account}"><span id="valid_account">${valid_account}</span></c:if>
 		            </div>
 		            <div class="col-xs-5 col-sm-5 col-md-5">
 		               <form:input path="password" type="password" class="form-control" placeholder="***********"/>
@@ -207,7 +201,7 @@
 		
 		$('.errorInvalid').fadeOut(5000);
 		
-		 $("#addStudentForm").validate({ //check validate
+		$("#addStudentForm").validate({ //check validate
 				rules:{
 					fullName :  "required",
 					dateOfBirth :  "required",
@@ -224,6 +218,39 @@
 					password: "Enter your's password"
 				}
 				
+			});
+		
+		// check correct information
+		$('#msg_info').css({"color":"#ff1a1a","font-size":"13px"}).fadeOut(6000);
+		$('#timeFuture').css({"color":"#ff1a1a","font-size":"13px"}).fadeOut(6000);
+		$('#format_phone').css({"color":"#ff1a1a","font-size":"13px"}).fadeOut(6000);
+		$('#format_email').css({"color":"#ff1a1a","font-size":"13px"}).fadeOut(6000);
+		$('#valid_email').css({"color":"#ff1a1a","font-size":"13px"}).fadeOut(6000);
+		$('#msg_gender').css({"color":"#ff1a1a","font-size":"13px"}).fadeOut(6000);
+		$('#valid_account').css({"color":"#ff1a1a","font-size":"13px"}).fadeOut(6000);
+		
+		// select address
+		 $("select#city").change(function () {
+				var data = $('select#city').val();
+				var myContextPath = "${pageContext.request.contextPath}";
+				$.ajax({
+					type : "GET",
+					contentType : 'application/json; charset=UTF-8',
+					dataType : 'json',
+					url : myContextPath + "/myAPI/ChangeDistrictList?data=" + data,
+					success : function(data) {
+						var district = document.getElementById('district');
+						 $(district).empty();
+						for (i in data) {
+					   	 $(district).append('<option  value=' +i+ '>' + data[i] + '</option>');
+					    }
+						
+					},
+					done : function(e) {
+						console.log("DONE");
+					}
+				});
+
 			});
 
 		

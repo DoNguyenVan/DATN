@@ -13,7 +13,7 @@
 	<div class="row border-bottom">
 
 		<div class="navbar navbar-static-top" id="header">
-			<h2 class="col-sm-8 col-md-8">Check Attendance Management System</h2>
+			<h2 class="col-sm-8 col-md-8">THE GALAXY LANGUAGE SCHOOL</h2>
 			<div class="pull-right" id="btn-group">
 				<div class="row">
 					<div class="current-username">

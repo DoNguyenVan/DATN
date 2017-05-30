@@ -18,7 +18,7 @@
 				<li class="nav-header">
 					<div class="profile-element">
 					    <span>
-							<img alt="image" class="img-circle" src ="img/vando.jpg">
+							<img alt="image" class="img-circle" src ="img/user.jpg">
 						</span>                       						            
 					</div>
 				</li>
@@ -26,11 +26,7 @@
 				<li>
 					<div class="menu-home"><a  href="${pageContext.request.contextPath}/admin/AdminManagement">Home Management</a></div>
 				</li>                  
-		  
-				<li>
-					<div class="menu-checked"><a  href="${pageContext.request.contextPath}/CheckAttendace">Check Attendance</a></div>
-				</li>
-		  
+		  		  
 				<li>
 					<div class="menu-student"><a  href="${pageContext.request.contextPath}/admin/listStudent">Student Management</a></div>
 				</li>

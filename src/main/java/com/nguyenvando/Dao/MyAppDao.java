@@ -25,5 +25,8 @@ public interface MyAppDao {
 	
 	public <T> List<T> getListBetween(Class<T> entityClass,String property, Date beginDate, Date endDate);
 	
+	public <T> T getEntityByColum(Class<T> entityClass,String searchColumn,String searchValue);
+	
+	public void updateClass_Student_Table(Integer classId, Integer studentId);
 	
 }

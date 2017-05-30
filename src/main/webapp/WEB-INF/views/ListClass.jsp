@@ -77,14 +77,14 @@
 		      <!-- Side bar -->  
 			    <%@include file="_siderbar.jsp" %>
 			  <!--  end side bar --> 
-			<div id="page-wrapper" class="white-bg" style="min-height:920px;">
+			<div id="page-wrapper" class="white-bg" style="min-height:910px;">
 			  
 			   <!-- Header page -->
 			   <%@include file="_header.jsp" %>
 				<!-- end header page -->
 
 				<!-- content -->   
-				 	<div class="row  border-bottom white-bg dashboard-header">
+					<div class="row  border-bottom white-bg dashboard-header">
 						<div class="col-xs-12 col-sm-12 col-md-12">
 							<div class="row">
 							  <div class="col-xs-10 col-sm-10 col-md-10"><h2>Full List Of Class in the System </h2></div>
@@ -115,18 +115,17 @@
 									    </div>					
 						               <div class="footer">
 						                 <div class="row">
-						                  <button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-import"></span>Submit</button>
-						                  <button type="button" class="btn btn-primary"><label>Cancel<span class="glyphicon glyphicon-remove"></span></label></button>
+						                  <button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-import"></span>Submit</button>						                 
 						                 </div>
 						               </div>
 					               </form>
 								  </div>
 								
 								</div> 	      
-	   					  <!-- End model -->      
-	   					       					      
-							  <span id="message">${message}</span>
+	   					  <!-- End model -->      	   					       					      					
 							</div>  
+							<span id="message">${message}</span>
+							
 							<div class="row col-xs-offset-8 col-sm-offset-8 col-md-offset-8">
 							  <div class="col-xs-6 col-sm-6 col-md-6"><label>Search by Course:</label></div>
 							  <div class="col-xs-6 col-sm-6 col-md-6">
@@ -203,9 +202,9 @@
 							</tbody>
 							
 						</table>
-					</div>
-				<!-- end content-->  
-	 
+					</div>				
+				
+				<!-- end content-->  	 
 				<!-- footer page -->
 				<%@include file="_footer.jsp" %>
 				<!-- end footer-->
@@ -222,7 +221,7 @@
 			"scrollX": true
 		} );
 		
-		 $('#message').css({"color":"#ff3300","font-size":"14px"}).fadeOut(5000);
+		 $('#message').css({"color":"#ff3300","font-size":"14px","margin-left":"10%"}).fadeOut(5000);
 		
 		 $('button.btn.btn-info.btn-lg').click(function () {
 				var modal = document.getElementById('myModal');

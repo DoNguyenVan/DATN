@@ -1,10 +1,14 @@
 package com.nguyenvando.Services;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nguyenvando.Dao.MyAppDao;
 import com.nguyenvando.Entities.Class;
 import com.nguyenvando.Entities.Course;
+import com.nguyenvando.Entities.Student;
 import com.nguyenvando.Entities.Teacher;
 import com.nguyenvando.Entities.Time;
 import com.nguyenvando.Utils.CLASS_ST_Object;
@@ -131,7 +136,9 @@ public class ClassManagementServiceImpl implements ClassManagementService{
 		timeObject.setDateOfWeek(result[0]);
 		timeObject.setStartTime(result[1]);
 		timeObject.setEndTime(result[2]);
-		timeObject.setClassTime(classObject);
+		if(!isValidtimeInClassTimeList(classObject, timeObject)){
+			timeObject.setClassTime(classObject);
+		}		
 		return timeObject;
 	}
 	
@@ -143,8 +150,8 @@ public class ClassManagementServiceImpl implements ClassManagementService{
 
 	@Transactional
 	@Override
-	public void setTimeForClass(Time time) {
-		myappdao.insertOrUpdate(time);		
+	public void setTimeForClass(Time time,Integer classId) {
+		myappdao.insertOrUpdate(time);
 	}
 	
 	@Transactional
@@ -156,6 +163,7 @@ public class ClassManagementServiceImpl implements ClassManagementService{
 	@Transactional
 	@Override
 	public void deleteClass(Class classObject) {
+		classObject.getStList().removeAll(classObject.getStList());		
 		myappdao.deleteEntity(classObject);		
 	}
 	
@@ -216,11 +224,13 @@ public class ClassManagementServiceImpl implements ClassManagementService{
 			classObject.setNumberOfSeats(object.getNumberOfSeats());
 			classObject.setClassLevel(object.getClassLevel());
 			classObject.setFee(object.getFee());
+			classObject.setFeeRemain(classObject.getFee());
 			classObject.setCourse(course);
 			if(teacher!=null){
 				classObject.setTeacher(teacher);
 				teacher.getTcClassList().add(classObject);
 			}	
+			course.getListClassOfCourse().add(classObject);
 			return classObject;
 		}catch(Exception e){
 			return null;
@@ -256,7 +266,7 @@ public class ClassManagementServiceImpl implements ClassManagementService{
 	@Transactional
 	@Override
 	public List<CLASS_ST_Object> class_St_List() {
-		List<Class> getList = myappdao.getList(Class.class);
+		List<Class> getList = myappdao.getDistinctList(Class.class);
 		List<CLASS_ST_Object> returnList = new LinkedList<CLASS_ST_Object>();
 		for (Class class1 : getList) {
 			CLASS_ST_Object Object = new CLASS_ST_Object();
@@ -319,5 +329,81 @@ public class ClassManagementServiceImpl implements ClassManagementService{
 		return returnList;
 				
 	}
+
+	@Override
+	public void saveCourse(String courseName, String timeLine, String note) {
+		Course course = new Course();
+		if(null!=courseName){
+			course.setCourseName(new String(courseName.getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8));
+		}
+		if(null!=timeLine){
+			course.setTimeline(new String(timeLine.getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8));
+		}
+		if(null!=note){
+			course.setNote(new String(note.getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8));
+		}
+		if(null!=course){
+			if(!IsValidCourse(course,"courseName", course.getCourseName().trim())){
+				myappdao.insertOrUpdate(course);
+			}
+		}
+	}
+
+	@Override
+	public boolean IsValidCourse(Course course, String searchColum, String searchValue) {
+		if(myappdao.IsValidObject(course, searchColum , course.getCourseName().trim())){
+			 return true;	
+			}
+			return false;
+	}
+
+	@Override
+	public boolean isValidtimeInClassTimeList(Class cObject, Time tObject) {
+		
+		List<Time> timeList = cObject.getTimeList();
+		for (Time time : timeList) {
+			if(tObject.getDateOfWeek().trim().equals(time.getDateOfWeek().trim()) && tObject.getStartTime().trim().equals(time.getStartTime().trim()) 
+					&& tObject.getEndTime().trim().equals(time.getEndTime().trim()) ){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public List<Student> generateSetToList(Set<Student> stList) {
+	
+		List<Student> returnList = new ArrayList<>();
+		Iterator<Student> itor = stList.iterator();
+		while(itor.hasNext()){
+			Student stObject = itor.next();
+			returnList.add(stObject);
+		}	
+		return returnList;
+	}
+
+	@Override
+	public void removeSTFormClass(Class cObject, Integer studentId) {
+		
+		Student st = myappdao.getEntityById(Student.class, studentId);
+		Set<Student> stList = cObject.getStList();
+		Set<Student> newList = new HashSet<>();
+		if(st!=null && stList.size() >0){
+			Iterator<Student> itor = stList.iterator();
+			while(itor.hasNext()){
+				Student student = itor.next();
+				if(student.getStudentId() == st.getStudentId()){
+					continue;					
+				}else{
+					newList.add(student);
+				}
+			}
+			
+		}
+		cObject.setStList(newList);		
+		myappdao.insertOrUpdate(cObject);
+		
+	}
+	
 
 }

@@ -1,6 +1,9 @@
 package com.nguyenvando.Services;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,7 +13,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hibernate.integrator.spi.Integrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,13 +23,20 @@ import com.nguyenvando.Dao.MyAppDao;
 import com.nguyenvando.Entities.Address;
 import com.nguyenvando.Entities.City;
 import com.nguyenvando.Entities.Class;
+import com.nguyenvando.Entities.Course;
 import com.nguyenvando.Entities.District;
 import com.nguyenvando.Entities.School;
+import com.nguyenvando.Entities.SchoolFee;
 import com.nguyenvando.Entities.Student;
+import com.nguyenvando.Entities.Time;
 import com.nguyenvando.Entities.User;
 import com.nguyenvando.Entities.UserRole;
+import com.nguyenvando.Utils.CLASS_ST_Object;
 import com.nguyenvando.Utils.MyAppUtil;
+import com.nguyenvando.Utils.STUDENT_SHEDULE;
 import com.nguyenvando.Utils.StudentFormAdd;
+import com.nguyenvando.Utils.StudentFormUpdate;
+
 
 @Service
 public class StudentManagementServiceImpl implements StudentManagementService {
@@ -58,6 +67,9 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 			byte[] fullName = stObject.getFullName().getBytes(StandardCharsets.ISO_8859_1);
 			byte[] gender = stObject.getGender().getBytes(StandardCharsets.ISO_8859_1);
 			
+			if(stObject.getStudentId()!=null){
+				st.setStudentId(stObject.getStudentId());
+			}
 			
 			st.setFullName(new String(fullName,StandardCharsets.UTF_8));
 			st.setGender(new String(gender,StandardCharsets.UTF_8));
@@ -91,12 +103,24 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 	public void saveorupdate(StudentFormAdd st) {		
 	 try{
 			Student student = generateStudent(st);
-			User stAccount = generateSTAccount(st);
-			UserRole stRole = generateUserRole(stAccount);
+			if(!isValidAccount(new User(), "username", st.getUserName())){
+				User stAccount = generateSTAccount(st);
+				UserRole stRole = generateUserRole(stAccount);
+				// save into db
+				setUserForStudent(stAccount);
+				setRoleForUser(stRole);
+				student.setStAccount(stAccount);
+			}else{
+				User stAccount = myappdao.getEntityByColum(User.class, "username",st.getUserName().trim());
+//				// save into db				
+				student.setStAccount(stAccount);
+			}
+
 			School stSchool = genrateSchool(st);
 			if (stSchool !=null) {
 				student.setSchool(stSchool);
 			}
+			
 			City city = generateCity(st);
 			District district = generateDistrict(st);
 			List<Address> addressList = myappdao.getList(Address.class);
@@ -113,10 +137,7 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 				myappdao.insertOrUpdate(stAddress);
 				student.setStAddress(stAddress);
 			}
-			// save into db
-			setUserForStudent(stAccount);
-			setRoleForUser(stRole);
-			student.setStAccount(stAccount);
+
 			myappdao.insertOrUpdate(student);
 
 			// Add Student To Class and add class for Student
@@ -124,7 +145,6 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 			student.getClassOfStudent().add(classObject);
 			classObject.getStList().add(student);	
 			myappdao.insertOrUpdate(classObject);
-
 			
 	 }catch(Exception e){
 		 e.printStackTrace();
@@ -335,7 +355,6 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 //		System.out.println(sts.size());
 
 		Set<Class> clist = student.getClassOfStudent();		
-		System.out.println(clist.size());
 		
 		for(Iterator<Class> object = clist.iterator(); object.hasNext();){
 			Class cObject = object.next();
@@ -374,5 +393,226 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 		return false;
 	}
 
+/*-------------------------------------------------------------------------------------------------------------------*/
+/*  Show information to Student page
+/*	
+/*-------------------------------------------------------------------------------------------------------------------*/	
+	@Override
+	public Student getStudentByAccount(String username) {
+		
+		User st_account = myappdao.getEntityByColum(User.class,"username",username.trim());
+		
+		Student st = new Student();
+		List<Student> list = myappdao.getList(Student.class);
+		for (Student student : list) {
+			//System.out.println(student.getStAccount().getUsername() +" "+ student.getStAccount().getPassword());
+			if(st_account.getUsername().trim().equals(student.getStAccount().getUsername().trim()) && 
+					st_account.getPassword().trim().equals(student.getStAccount().getPassword().trim())){
+				st = student;
+				break;
+			}
+		}
+		return st;
+	}
+
+	@Transactional
+	@Override
+	public Map<Integer, String> mapCourse() {
+		List<Course> getList = myappdao.getList(Course.class);
+		Map<Integer, String> mapCourse = new HashMap<>();
+		mapCourse.put(0, "---------Course-----");
+		for (Course course : getList) {
+			mapCourse.put(course.getIdCourse(), course.getCourseName());
+		}
+		return mapCourse;
+	}
+
+	@Transactional
+	@Override
+	public List<Class> getListClassByCourseId(Integer courseId) {
+			
+		Course course = myappdao.getEntityById(Course.class, courseId);		
+		List<Class> list = new ArrayList<>();
+		if(course!=null){
+			Iterator<Class> itor = course.getListClassOfCourse().iterator(); 
+			while (itor.hasNext()) {
+				list.add(itor.next());
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public Map<Integer,CLASS_ST_Object> getClassByCourse(Integer courseId) {
+		
+		Course course = myappdao.getEntityById(Course.class, courseId);
+		Map<Integer, CLASS_ST_Object> map = new HashMap<>();		
+		if(course!=null){
+			Set<Class> set = course.getListClassOfCourse();
+			Iterator<Class> itor =  set.iterator();
+			while (itor.hasNext()) {
+				Class cObject = itor.next();
+				CLASS_ST_Object object = new CLASS_ST_Object();
+				object.setClassId(cObject.getClassId());
+				object.setClassName(cObject.getClassName());
+				object.setNumberSTofCLASS(cObject.getStList().size());
+				map.put(cObject.getClassId(),object);
+			}
+
+		}
+				
+		return map;
+	}
+
+	@Override
+	public Map<Integer, CLASS_ST_Object> getClassByCourse(String classLevel, String courseId) {
+		Course course = myappdao.getEntityById(Course.class, Integer.parseInt(courseId));
+		Map<Integer, CLASS_ST_Object> map = new HashMap<>();
+		if(course!=null){
+			Set<Class> set = course.getListClassOfCourse();
+			Iterator<Class> itor =  set.iterator();
+			while (itor.hasNext()) {
+				Class cObject = itor.next();
+				if(classLevel.equals(cObject.getClassLevel())){
+					CLASS_ST_Object object = new CLASS_ST_Object();
+					object.setClassId(cObject.getClassId());
+					object.setClassName(cObject.getClassName());
+					object.setNumberSTofCLASS(cObject.getStList().size());
+					map.put(cObject.getClassId(),object);
+				}
+			}
+
+		}
+		return map;
+	}
+
+	@Override
+	public List<STUDENT_SHEDULE> generateST_Time(Student st) {
+		
+		Set<Class> cList = st.getClassOfStudent();
+		List<STUDENT_SHEDULE> stSchedule = new ArrayList<>();
+		if(cList.size()>0){
+			Iterator<Class> cObject = cList.iterator();
+			while(cObject.hasNext()){
+				Class object = cObject.next();
+				List<Time> timeList = object.getTimeList();
+				for (Time time : timeList) {
+					STUDENT_SHEDULE sts = new STUDENT_SHEDULE();
+					sts.setClassName(object.getClassName());
+					sts.setDayOfWeek(time.getDateOfWeek());
+					sts.setStartTime(time.getStartTime());
+					sts.setEndtTime(time.getEndTime());
+					stSchedule.add(sts);
+				}
+			}
+		}
+		return stSchedule;
+	}
+
+	@Transactional
+	@Override
+	public void RegisterClassForStudent(Student st, String classId) {
+		
+		Class cObject = myappdao.getEntityById(Class.class,Integer.parseInt(classId));
+		try{
+			if(cObject!=null && cObject.getStList().size()<cObject.getNumberOfSeats() ){ //&& !st.getClassOfStudent().contains(cObject) && !cObject.getStList().contains(st)
+				st.getClassOfStudent().add(cObject);
+				cObject.getStList().add(st);
+				myappdao.insertOrUpdate(cObject);				
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	@Transactional
+	@Override
+	public void paidFee(Integer classId, float feeValue, Integer studentId ) {
+		
+		Class cObject = myappdao.getEntityById(Class.class, classId);
+		Date date = new Date(); // current date System
+	    Calendar cal = Calendar.getInstance();
+	    cal.setTime(date);
+	    int year = cal.get(Calendar.YEAR);
+	    int month = cal.get(Calendar.MONTH)+1;
+	    int day = cal.get(Calendar.DAY_OF_MONTH);
+	    
+	    String dateStr = year +"/"+month+"/"+day;
+	    
+	    SchoolFee scFee = new SchoolFee();
+	    scFee.setDatePaid(getInstanceUtilsApp().String_To_Date(dateStr, "yyyy/MM/dd"));
+	    scFee.setFeeValue(feeValue);
+	    scFee.setRemain(cObject.getFeeRemain() - feeValue);
+	    scFee.setStudent(myappdao.getEntityById(Student.class,studentId));
+	    
+	    //Set Class Fee again
+	    cObject.setFeeRemain(scFee.getRemain());
+	    
+	    myappdao.insertOrUpdate(cObject);
+		myappdao.insertOrUpdate(scFee);
+	}
+
+	@Override
+	public StudentFormAdd generateFormStudent(Student student) {
+		StudentFormAdd studentForm =new StudentFormAdd();
+		studentForm.setStudentId(student.getStudentId());
+		studentForm.setFullName(student.getFullName());	
+		studentForm.setDateOfBirth(student.getDateOfBirth());
+		studentForm.setPhoneNumber(student.getPhoneNumber());
+		studentForm.setEmail(student.getEmail());
+		studentForm.setGender(student.getGender());
+		if(student.getStudentLevel()!=null)
+		{
+			studentForm.setStLevel(student.getStudentLevel());
+		}
+		
+		if(student.getStAddress()!=null){
+			if(student.getStAddress().getCity()!=null){
+				studentForm.setCity(student.getStAddress().getCity().getCityId());
+			}
+			if(student.getStAddress().getDistrict()!=null){
+				studentForm.setDistrict(student.getStAddress().getDistrict().getDistrictId());
+			}
+		}
+		
+		if(student.getSchool() !=null){
+			studentForm.setSchool(student.getSchool().getSchoolId());
+		}
+		if(student.getStAccount()!=null){
+			studentForm.setUserName(student.getStAccount().getUsername());
+			studentForm.setPassword(student.getStAccount().getPassword());	
+		}
+		if(student.getClassOfStudent().size() > 0){
+			studentForm.setClassListOfST(student.getClassOfStudent());
+		}
+		
+		return studentForm;
+	}
+
+	@Override
+	public List<Class> generateSetToList(Set<Class> setclass) {
+		
+		List<Class> returnlist = new ArrayList<>();
+		
+		Iterator<Class> itor = setclass.iterator();
+		while(itor.hasNext()){
+			Class cObject = itor.next();
+			returnlist.add(cObject);
+		}	
+		return returnlist;
+	}
+
+	@Override
+	public boolean updatePassword(String username, String oldPassword, String newPassword) {
+		Student st = getStudentByAccount(username.trim());
+		User account = st.getStAccount();
+		passwordEncoder = new BCryptPasswordEncoder();
+		if(passwordEncoder.matches(oldPassword, account.getPassword()) && oldPassword!=null && newPassword!=null){
+			account.setPassword(passwordEncoder.encode(newPassword));
+			myappdao.insertOrUpdate(account);
+			return true;
+		}else return false;
+	}
 
 }

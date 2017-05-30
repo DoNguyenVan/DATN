@@ -1,9 +1,11 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page session="true"%>
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Home Page</title>
 <style type="text/css">
   .gray-bg, .bg-muted{
@@ -100,6 +102,7 @@
 					<div class="col-xs-offset-1 col-xs-4 col-sm-offset-1 col-sm-4 col-md-offset-1 col-md-4" id="scrollSpace">	
 							<h1 class="col-xs-12 col-sm-12 col-md-12">Student Of class</h1>
 							<c:forEach items="${classList}" var="object">
+							<a href="${pageContext.request.contextPath}/admin/CheckAttendace?classId=${object.classId}">
 								<div class="col-xs-6 col-sm-6 col-md-6"> 
 									<div class="widget style1 navy-bg">
 										<h4>
@@ -112,6 +115,7 @@
 										</ul>
 									</div>	
 								</div>
+							</a>	
 							</c:forEach>							 
 						</div>			
 				 </div>  

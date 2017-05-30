@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
@@ -62,7 +63,9 @@ public class MyAppDaoImpl implements MyAppDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getEntityById(Class<T> entityClass, int id) {
-		return (T) sessionFactory.getCurrentSession().get(entityClass,id);
+		T  t = (T) sessionFactory.getCurrentSession().get(entityClass,id);
+		sessionFactory.getCurrentSession().clear();
+		return t;
 	}
 
 	@Override
@@ -125,6 +128,31 @@ public class MyAppDaoImpl implements MyAppDao{
 			result=criteria.list();
 		}
 		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getEntityByColum(Class<T> entityClass, String searchColumn, String searchValue) {
+		
+		Session session = sessionFactory.getCurrentSession();	
+		Criteria crit = session.createCriteria(entityClass) ;
+		crit.add(Restrictions.eq(searchColumn, searchValue));
+		if(crit.uniqueResult() != null){
+			return (T) crit.uniqueResult();
+		}
+		
+		return null;
+	}
+
+	@Override
+	public void updateClass_Student_Table(Integer classId, Integer studentId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("insert into CLASS_STUDENT (classId, studentId) values("+classId+","+studentId+")");
+	      int result=query.executeUpdate();
+	      if(result>0){
+	    	  System.out.println("Insert susscessfull");
+	      }
+		
 	}
 
 

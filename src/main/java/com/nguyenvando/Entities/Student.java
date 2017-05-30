@@ -45,6 +45,39 @@ public class Student {
 	public Student() {
 	}
 
+	
+	/**
+	 * @param studentId
+	 * @param fullName
+	 * @param dateOfBirth
+	 * @param phoneNumber
+	 * @param email
+	 * @param studentLevel
+	 * @param gender
+	 * @param stAddress
+	 * @param school
+	 * @param stAccount
+	 * @param classOfStudent
+	 * @param examList
+	 * @param feePaidList
+	 */
+	public Student(Student st) {
+		this.studentId = st.studentId;
+		this.fullName = st.fullName;
+		this.dateOfBirth = st.dateOfBirth;
+		this.phoneNumber = st.phoneNumber;
+		this.email = st.email;
+		this.studentLevel = st.studentLevel;
+		this.gender = st.gender;
+		this.stAddress = st.stAddress;
+		this.school = st.school;
+		this.stAccount = st.stAccount;
+		this.classOfStudent = st.classOfStudent;
+		this.examList = st.examList;
+		this.feePaidList = st.feePaidList;
+	}
+
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="studentId", unique = true,nullable = false)

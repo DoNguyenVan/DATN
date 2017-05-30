@@ -21,10 +21,13 @@
      background-color: beige;
      padding-bottom: 3%;
 	}
-	div#form2 {
+	div#detail {	 
       background-color: floralwhite;
       overflow: scroll;
       height: 350px;
+	}
+	div#table_Detail{
+	 display: none;
 	}
 	div#Search_Form {
      padding: 0.5%;
@@ -122,16 +125,17 @@
 				<span id="error">${error}</span>
 				<span id="errors">${errors}</span>
 				
-				 <div class="row  border-bottom white-bg dashboard-header" id="form2">
+			<div class="row  border-bottom white-bg dashboard-header" id="detail">
+			 <button class="glyphicon glyphicon-eye-open btn-lg" id="view_detail_btn" type="button"></button>
+			  <div id="table_Detail">	 
 				   <div id="table">
 				     <table class="table table-condensed"> 
 				       <thead><tr>
 				         <th>STT</th>				         
 				         <th>Thời Gian</th>
-				         <th>Hoạt Động</th>
+				         <th>Chi Tiết</th>
 				         <th>Tiền Thu</th>
-				         <th>Tiền Chi</th>
-				         <th>Tiền Lãi</th>
+				         <th>Tiền Chi</th>				        
 				       </tr></thead>
 				       <tbody>
 				         <%int i=0; %>
@@ -139,22 +143,64 @@
 				          <tr> 
 				            <td><%=++i %></td>
 				            <td>${list.date}</td>
-				            <td>${list.activity}</td>				            
-				            <td>${list.proceeds}</td>
-				            <td>${list.payouts}</td>
-				            <td>${list.interest}</td>
+				            <td>${list.activity}</td>	
+				            <c:if test="${list.proceeds==0 || list.payouts ==0}"></c:if>
+				            <c:if test="${list.proceeds!=0 && list.payouts ==0}">
+				           	 <td>${list.proceeds}</td>
+				           	 <td></td>
+				            </c:if>	
+				             <c:if test="${list.proceeds==0 && list.payouts !=0}">	
+				               <td></td>
+				               <td>${list.payouts}</td>
+				             </c:if>		           
 				          </tr>
 				         </c:forEach> 
-				         <tr>
-				          <td colspan="3"><label>Tổng Kết Thu Chi</label></td> 
-				          <td>${total1}</td>
-				          <td>${total2}</td>
-				          <td>${total3}</td>
-				         </tr>
 				       </tbody>
 				     </table>
 				   </div>
+				</div>
+				
+				<div id="TK">
+					<div class="row col-xs-offset-1 col-sm-offset-1 col-md-offset-1">	   
+						<div class="col-xs-3 col-sm-3 col-md-3" > 
+							<div class="widget lazur-bg p-xl">
+								<h4>TỔNG THU</h4>
+								<ul class="list-unstyled m-t-md">
+									<li class="pull-left">
+										${total1}  
+									</li>
+								</ul>
+							</div>	
+						</div>
+						
+						<div class="col-xs-3 col-sm-3 col-md-3" > 
+							<div class="widget lazur-bg p-xl">
+								<h4>TỔNG CHI</h4>
+								<ul class="list-unstyled m-t-md">
+									<li class="pull-left">
+										${total2}
+									</li>
+								</ul>
+							</div>	
+						</div>
+						
+						<div class="col-xs-3 col-sm-3 col-md-3" > 
+							<div class="widget lazur-bg p-xl">
+								<h4>TIỀN LÃI</h4>
+								<ul class="list-unstyled m-t-md">
+									<li class="pull-left">
+										${total3}
+									</li>
+								</ul>
+							</div>	
+						</div>
+						
+					</div>	   
+				 </div>  
+				   
+				   
 				 </div>
+				 				 
 				<!-- end content-->  
 	 
 				<!-- footer page -->
@@ -197,6 +243,19 @@ $(document).ready(function() {
 	
 	 $('#error').css({"color":"#009966","font-size":"13px"}).fadeOut(6000);
 	 $('#errors').css({"color":"#009966","font-size":"13px"}).fadeOut(6000);
+	 
+	 $('button#view_detail_btn').click(function(){	
+		 var x = document.getElementById('table_Detail');	
+		 var y = document.getElementById('TK');
+		 if (x.style.display === 'none') {
+		        x.style.display = 'block';	
+		        y.style.display = 'none';	
+		  } else {
+		        x.style.display = 'none';	
+		        y.style.display = 'block';	
+		    }			 
+		 
+	 });
 
 } );
 

@@ -39,6 +39,7 @@ public class Class {
 	private int numberOfSeats;
 	private String classLevel;
 	private float fee;
+	private float feeRemain;
 	private Set<Student>stList = new HashSet<>();
 	private List<Time>timeList = new ArrayList<Time>();
 	private Teacher teacher;
@@ -117,9 +118,9 @@ public class Class {
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "CLASS_STUDENT", joinColumns = {
-			@JoinColumn(name = "classId", nullable = false, updatable = false) },
+			@JoinColumn(name = "classId", nullable = false, updatable = true) },
 			inverseJoinColumns = { @JoinColumn(name = "studentId",
-					nullable = false, updatable = false) })
+					nullable = false, updatable = true) })
 	public Set<Student> getStList() {
 		return stList;
 	}
@@ -146,6 +147,15 @@ public class Class {
 
 	public void setCourse(Course course) {
 		this.course = course;
+	}
+
+	@Column(name="feeRemain",nullable=true)
+	public float getFeeRemain() {
+		return feeRemain;
+	}
+
+	public void setFeeRemain(float feeRemain) {
+		this.feeRemain = feeRemain;
 	}
 	
 }

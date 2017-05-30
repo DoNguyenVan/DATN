@@ -25,9 +25,9 @@
 	 .col-xs-offset-1.col-sm-offset-1.col-md-offset-1.col-xs-10.col-sm-10.col-md-10 {
 	    background-color: lightyellow;
 	   }	
-	.row.border-bottom.white-bg.dashboard-header {
-	    background-color: lightgoldenrodyellow;
-	}  	
+ 	div#header-AddStudent {
+  	  margin-top: 2%;
+	}
 	input#fullName,input#dateOfBirth,input#phoneNumber,input#email,select#district,select#city,
 	select#classList,input#userName,input#password,select#school{
 	 width: 200px;
@@ -61,31 +61,28 @@
 		      <!-- Side bar -->  
 			    <%@include file="_siderbar.jsp" %>
 			  <!--  end side bar --> 
-			<div id="page-wrapper" class="white-bg" style="min-height: 760px;min-width: 500px">
+			<div id="page-wrapper" class="white-bg" style="min-height: 660px;">
 			  
 			   <!-- Header page -->
 			   <%@include file="_header.jsp" %>
 				<!-- end header page -->
 
-				<!-- content -->   	
-					<div class="row  border-bottom white-bg dashboard-header">
-					  <div class="row"> 
-					   <div class="col-xs-4 col-sm-4 col-md-4"><h2>ADD NEW STUDENT</h2></div> 
-					   <div class="col-xs-offset-3 col-sm-offset-3 col-md-offset-3 col-md-2"><label>Search by Course:</label></div>
+				<!-- content -->
+				   	
+					  <div class="row" id="header-AddStudent"> 
+					   <div class="col-md-offset-1 col-xs-4 col-sm-4 col-md-4"><h2>ADD NEW STUDENT</h2></div> 
+					   <div class="col-xs-offset-2 col-sm-offset-2 col-md-offset-2 col-xs-3 col-sm-2 col-md-2"><label>Search by Course:</label></div>
 					   <div class="col-xs-5 col-sm-5 col-md-5 dropdown">
 					     <form:form commandName="search_course">
 							<form:select path="couseId" class="dropdown-select" >
 							   <form:options items="${listCourse}" />
 							</form:select>								
 						 </form:form>
-
+					   </div>					    
 					   </div>
-					   </div>
-					   <span id="message">${message}</span>
-
-			    
-					    <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-xs-10 col-sm-10 col-md-10">
-					                                 
+			 	    <span id="message">${message}</span>
+			 	    
+					    <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-xs-10 col-sm-10 col-md-10">					                                 
 					     <form:form  action ="${pageContext.request.contextPath}/admin/doAddStudent" 
 					        method="post" commandName="StudentForm" id="addStudentForm"> 
 					          <table class ="table">
@@ -301,7 +298,6 @@
 							</table>	 
 					        </form:form>  
 					    </div>                          
-					</div>
 
 				<!-- end content-->  
 	 

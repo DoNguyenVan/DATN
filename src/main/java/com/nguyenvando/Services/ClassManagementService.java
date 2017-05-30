@@ -5,9 +5,11 @@ package com.nguyenvando.Services;
  */
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.nguyenvando.Entities.Class;
 import com.nguyenvando.Entities.Course;
+import com.nguyenvando.Entities.Student;
 import com.nguyenvando.Entities.Teacher;
 import com.nguyenvando.Entities.Time;
 import com.nguyenvando.Utils.CLASS_ST_Object;
@@ -26,7 +28,7 @@ public interface ClassManagementService {
 	public Time getTimeById(int id);	
 	public Time generateTimeEntity(Class classObject, String timeStr);
 	public void saveorupdate(Class classObject);
-	public void setTimeForClass(Time time);
+	public void setTimeForClass(Time time,Integer classId);
 	public void deleteTime (Time time);
 	public void deleteClass(Class classObject);
 	public long countAllClass();
@@ -41,4 +43,11 @@ public interface ClassManagementService {
 	public Map<Integer, String> getTeachers();
 	public Map<Integer,String> getCourse();
 	public Map<Integer,Class> getClassByCourse(Integer courseId);
+	public boolean isValidtimeInClassTimeList(Class cObject,Time tObject);
+	public List<Student> generateSetToList(Set<Student> stList);
+	public void removeSTFormClass(Class cObject,Integer studentId);
+	//addCourse
+	public void saveCourse(String courseName, String timeLine,String note);
+	public boolean IsValidCourse(Course course,String searchColum,String searchValue);
+	
 }

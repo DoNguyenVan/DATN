@@ -107,7 +107,7 @@
 								
 								  <!-- Modal content -->
 								  <div class="modal-content">
-								   <form  id="import_Form" action="${pageContext.request.contextPath}/importClass" method="post"
+								   <form  id="import_Form" action="${pageContext.request.contextPath}/importStudent" method="post"
 								     enctype="multipart/form-data">
 									   <div class="row">								  								    
 									       <span class="glyphicon glyphicon-import">Import Data Form File</span>
@@ -141,12 +141,10 @@
 							<thead>
 							  <tr>
 							    <th>STT</th>
-							    <th>Full Name</th>							    
-							    <th>Birthday</th>
+							    <th>Full Name</th>							    							   
 							     <th>Gender</th>
 							    <th>Phone</th>
 							    <th>Email</th>
-							    <th>Address</th>	
 							    <th>School</th>						    
 							    <th>Action</th>
 							   </tr>
@@ -156,15 +154,13 @@
 								<c:forEach items="${listStudent}" var="list">
 								 <tr>
 									<td><%=++x %></td>
-									<td>${list.fullName}</td>
-									<td>${list.dateOfBirth}</td>
+									<td>${list.fullName}</td>									
 									<td>${list.gender}</td>
 									<td>${list.phoneNumber}</td>
 									<td>${list.email}</td>
-									<td>${list.stAddress.city.cityName}</td>
 									<td>${list.school.schoolName}</td>
 									<td> 
-									    <a href="#" role="button" class="btn"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> </a> 
+									    <a href="${pageContext.request.contextPath}/admin/editStudent?studentid=${list.studentId}" role="button" class="btn"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> </a> 
 										<a href="#delBoxConfirm${list.studentId}" role="button" class="btn" data-toggle="modal">
 										 <span class="glyphicon glyphicon-erase" aria-hidden="true"></span></a>
 									  <!-- Start Confirm Delete Box --> 
@@ -221,7 +217,7 @@
 			"scrollX": true
 		} );
 		
-	//	 $('#message').css({"color":"#009966","font-size":"13px"}).fadeOut(6000);
+		 $('#message').css({"color":"#009966","font-size":"14px","margin-left":"8%"}).fadeOut(6000);
 		 
 		 $('button.btn.btn-info.btn-lg').click(function () {
 				var modal = document.getElementById('myModal');

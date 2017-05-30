@@ -52,6 +52,7 @@ import com.nguyenvando.Utils.FormForList;
 import com.nguyenvando.Utils.MyAppUtil;
 import com.nguyenvando.Utils.Statistic;
 import com.nguyenvando.Utils.StudentFormAdd;
+import com.nguyenvando.Utils.StudentFormUpdate;
 import com.nguyenvando.Utils.TeacherFormAdd;
 import com.nguyenvando.Utils.urlPathForController;
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
@@ -86,14 +87,40 @@ public class AdminManageController {
 		model.setViewName("AdminHome");
 		return model;
 	}
-
+	/*-------------------------------------------------------------------------*/
+	//Check Attendance Controller Start
+	@RequestMapping(value="/CheckAttendace")
+	public ModelAndView admincheckAttendace(Map<String, Object> map,@RequestParam("classId") String classId){
+		ModelAndView model = new ModelAndView();
+		currentClassId = Integer.parseInt(classId);
+		currentClass = classService.getClassById(currentClassId);	
+		List<Student> list = classService.generateSetToList(currentClass.getStList());
+		map.put("StOfClass",list );	
+		map.put("ClassName", currentClass.getClassName());
+		model.setViewName("CheckAttendance");
+		return model;
+	}
+	@RequestMapping(value="/doDeleteSTFormClass",method=RequestMethod.GET)
+	public String doDeleteSTFormClass(Map<String, Object> map,@RequestParam("studentid") String studentId,
+			final RedirectAttributes redirectAttributes){
+		try{
+			classService.removeSTFormClass(currentClass, Integer.parseInt(studentId));
+			redirectAttributes.addFlashAttribute("message", "Student has been deleted!");
+			return "redirect:/admin/CheckAttendace?classId="+currentClassId;
+		}catch(Exception e){
+			redirectAttributes.addFlashAttribute("message", "cannot delete Student Form Class!");
+			return "redirect:/admin/CheckAttendace?classId="+currentClassId;
+		}
+			
+	}
+	/*-------------------------------------------------------------------------*/
 	/*-------------------------------------------------------------------------*/
 	// Class Management Controller Start
 	/*-------------------------------------------------------------------------*/
 	@RequestMapping(value = "/listClass")
 	public ModelAndView adminPageViewListClass(Map<String, Object> map) {
 		ModelAndView model = new ModelAndView();
-		map.put("listClass", classService.getAllClass());
+		map.put("listClass", classService.getDistinctListClass());
 		map.put("search_course", new FormForList());
 		map.put("listCourse",classService.getCourse());
 		model.setViewName("ListClass");
@@ -112,6 +139,19 @@ public class AdminManageController {
 		return model;
 	}
 
+	@RequestMapping(value="/addCourse",method=RequestMethod.POST)
+	public String doAddCourse(@RequestParam("coursename") String courseName,@RequestParam("timeline")String timeLine,@RequestParam("note")String note,
+		   Map<String, Object> map,final RedirectAttributes redirectAttributes){
+		
+		try{			
+			classService.saveCourse(courseName, timeLine, note);
+			redirectAttributes.addFlashAttribute("errorMessage", "New Course has been created!");
+		}catch(Exception e){
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+		}				
+		return "redirect:/admin/addClass";
+	}
+	
 	@RequestMapping(value = "/doAddClass", method = RequestMethod.POST)
 	public ModelAndView doAddClass(@ModelAttribute("classForm") ClassFormAdd classForm, Map<String, Object> map,
 			final RedirectAttributes redirectAttributes) {
@@ -211,7 +251,7 @@ public class AdminManageController {
 			final RedirectAttributes redirectAttributes) {
 		try {
 			classService.setTimeForClass(
-					classService.generateTimeEntity(classService.getClassById(currentClassId), timeStr));
+					classService.generateTimeEntity(classService.getClassById(currentClassId), timeStr),currentClassId);
 
 			redirectAttributes.addFlashAttribute("success", "Time has been created successfully!");
 			return "redirect:/admin/SetSchedule";
@@ -347,6 +387,62 @@ public class AdminManageController {
 		return model;
 	}
 	
+	@RequestMapping(value="/editStudent",method=RequestMethod.GET)
+	public ModelAndView editStudentForm(@RequestParam(name="studentid") String studentId,Map<String, Object> map){	
+		
+		Student st = studentService.getStudentById(Integer.parseInt(studentId));
+		StudentFormAdd stFormUpdate = studentService.generateFormStudent(st);	
+		
+		return this.formEditStudent(map,stFormUpdate);
+		
+	}
+	
+	@RequestMapping(value="/updateStudent",method=RequestMethod.POST)
+	public ModelAndView updateStudent(@ModelAttribute("StudentForm")StudentFormAdd StudentForm,Map<String, Object> map,
+			final RedirectAttributes redirectAttributes){
+		
+		ModelAndView model = new ModelAndView();
+		try{
+			boolean checkPoint = true;
+			EmailValidator emailValidator = EmailValidator.getInstance();		
+			 if(studentService.getInstanceUtilsApp().is_date1_affer_date2(studentService.getInstanceUtilsApp().
+				 String_To_Date(StudentForm.getDateOfBirth()),studentService.getInstanceUtilsApp().getSystemDateTime())){
+				 checkPoint = false;
+				 map.put("timefuture", "The future time was choose, please choose time again!");
+			 }
+			 if(!emailValidator.isValid(StudentForm.getEmail())){
+				 checkPoint = false;
+				 map.put("emailformat", "Invalid Email! Try again!");
+			 }
+			 if(!studentService.isPhoneFormat(StudentForm.getPhoneNumber())){
+				 checkPoint = false;
+				 map.put("phoneformat", "Invalid phone number! Try again!");
+			 }
+			 if(checkPoint){	
+				 try{	
+						 studentService.saveorupdate(StudentForm);		
+						 redirectAttributes.addFlashAttribute("message", "Student has been updated successfully!");
+						 model.setViewName("redirect:/admin/listStudent");
+						 return model;
+					 }catch(JDBCException jdbce){
+						 map.put("message", jdbce.getMessage());
+						 return this.formEditStudent(map, StudentForm);
+					 }catch (Exception e) {
+						map.put("message", e.getMessage());
+						return this.formEditStudent(map, StudentForm);
+					 }
+			 }else{
+				 redirectAttributes.addFlashAttribute("message", "fail to update student!");
+				 return this.formEditStudent(map, StudentForm);
+			 }		 
+		}
+		catch(Exception e){
+		 map.put("message", e.getMessage());
+		 return this.formEditStudent(map, StudentForm);
+		}			
+		
+	}
+	
 	@RequestMapping(value="/doDeleteStudent",method=RequestMethod.POST)
 	public ModelAndView doDeleteStudent(@RequestParam(name = "studentid") String studentid,
 			final RedirectAttributes redirectAttributes){
@@ -373,7 +469,7 @@ public class AdminManageController {
 	}
 	
 	private ModelAndView formAddStudent(Map<String, Object> map,StudentFormAdd st ) {
-		ModelAndView view = new ModelAndView();
+		ModelAndView view = new ModelAndView();		
 		map.put("StudentForm", st);
 		map.put("ClassMap", studentService.mapClass(null,null)); 
 		map.put("classLevel", classService.mapClassLevel());
@@ -384,6 +480,19 @@ public class AdminManageController {
 		map.put("search_course", new FormForList());
 		map.put("listCourse",classService.getCourse());
 		view.setViewName("AddStudent");
+		return view;
+	}
+
+	private ModelAndView formEditStudent(Map<String, Object> map,StudentFormAdd st ) {
+		ModelAndView view = new ModelAndView();
+		
+		map.put("StudentForm", st);
+		map.put("ClassMap", studentService.mapClass(null,null)); 
+		map.put("stclassList", studentService.generateSetToList(st.getClassListOfST()));
+		map.put("cityMap", studentService.mapCity());
+		map.put("districtMap", studentService.mapDistrict(st.getCity()));
+		map.put("schoolMap", studentService.mapSchool());
+		view.setViewName("editStudent");
 		return view;
 	}
 

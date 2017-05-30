@@ -4,6 +4,8 @@
 package com.nguyenvando.Entities;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +30,8 @@ public class Course {
 	private Integer idCourse;
 	private String courseName;
 	private String timeline;
-	private Collection<Class> listClassOfCourse;
+	private String note;
+	private Set<Class> listClassOfCourse = new HashSet<>();
 
 	public Course() {
 	}
@@ -62,15 +65,26 @@ public class Course {
 		this.timeline = timeline;
 	}
 
+	
+	
+	@Column(name="note",nullable=true,length=100)
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "course")
 	@Fetch(value = FetchMode.SUBSELECT)
-	public Collection<Class> getListClassOfCourse() {
+	public Set<Class> getListClassOfCourse() {
 		return listClassOfCourse;
 	}
 
-	public void setListClassOfCourse(Collection<Class> listClassOfCourse) {
+	public void setListClassOfCourse(Set<Class> listClassOfCourse) {
 		this.listClassOfCourse = listClassOfCourse;
 	}
-	
+
 
 }

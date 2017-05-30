@@ -58,7 +58,7 @@ public class AppConfig {
 		
 		BasicDataSource ds = new BasicDataSource();
 	    ds.setDriverClassName("net.sourceforge.jtds.jdbc.Driver");
-		ds.setUrl("jdbc:jtds:sqlserver://localhost:1433;useUnicode=true;characterEncoding=UTF-8;databaseName=test;instance=SQLEXPRESS");
+		ds.setUrl("jdbc:jtds:sqlserver://localhost:1433;useUnicode=true;characterEncoding=UTF-8;databaseName=DATN;instance=SQLEXPRESS");
 //		ds.setConnectionProperties("useUnicode=yes;characterEncoding=utf8;");
 		ds.setUsername("sa");
 		ds.setPassword("102120169");

@@ -103,7 +103,7 @@
 								
 								  <!-- Modal content -->
 								  <div class="modal-content">
-								   <form  id="import_Form" action="${pageContext.request.contextPath}/importClass" method="post"
+								   <form  id="import_Form" action="${pageContext.request.contextPath}/importTeacher" method="post"
 								     enctype="multipart/form-data">
 									   <div class="row">								  								    
 									       <span class="glyphicon glyphicon-import">Import Data Form File</span>
@@ -141,8 +141,7 @@
 							    <th>Gender</th>						    
 							    <th>Birthday</th>
 							    <th>Phone</th>
-							    <th>Email</th>
-							    <th>Address</th>							    
+							    <th>Email</th>						    
 							    <th>Action</th>
 							   </tr>
 							</thead>
@@ -156,7 +155,6 @@
 									<td>${list.dateOfBirth}</td>
 									<td>${list.phoneNumber}</td>
 									<td>${list.email}</td>
-									<td>Address</td>
 									<td> 
 									    <a href="#" role="button" class="btn"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> </a> 
 										<a href="#delBoxConfirm${list.teacherId}" role="button" class="btn" data-toggle="modal">
