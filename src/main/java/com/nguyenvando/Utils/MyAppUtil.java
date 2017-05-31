@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,9 +30,19 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 public class MyAppUtil {
 	
+//	public static void main(String[]args){
+//	  System.out.println(formatNumberFloat("4000000.0" ,"###,###.###"));	
+//	}
+//	
 	public Date dateFormat(Date date,String format){
 		
 		return date;
+	}
+	
+	public static String formatNumberFloat(String value,String pattern){
+		 DecimalFormat myFormatter = new DecimalFormat(pattern);
+		 String output = myFormatter.format(Double.parseDouble(value));
+		 return output;
 	}
 	
 	public  String Date_To_String(Date date){

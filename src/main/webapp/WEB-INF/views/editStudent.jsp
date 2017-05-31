@@ -100,20 +100,20 @@
 			action="${pageContext.request.contextPath}/admin/updateStudent">
 				<div clas="row col-md-offset-1 col-xs-10 col-sm-10 col-md-10">
 					<div class="row col-xs-5 col-sm-5 col-md-5">
-					  <div class="col-md-4">
+					  <div class="col-xs-4 col-sm-4 col-md-4">
 					   <label class="pull-right">Full Name</label>
 					  </div>
-					  <div class="col-md-8">
+					  <div class="col-xs-8 col-sm-8 col-md-8">
 					    <form:input type="hidden" class="form-control pull-left" path="studentId"/>
 					    <form:input type="text" class="form-control pull-left" path="fullName"/>
 					  </div>
 					</div>
 					<div class="row col-xs-5 col-sm-5 col-md-5">
 
-					  <div class="col-md-4">
+					  <div class="col-xs-4 col-sm-4 col-md-4">
 					   <label class="pull-right">Birthday</label>
 					  </div>
-					  <div class="col-md-8">
+					  <div class="col-xs-8 col-sm-8 col-md-8">
 					    <form:input type="date" class="form-control pull-left" path="dateOfBirth"/>
 					  </div>
 				
@@ -121,19 +121,19 @@
 				</div>
 				<div clas="row col-md-offset-1 col-xs-10 col-sm-10 col-md-10">
 					<div class="row col-xs-5 col-sm-5 col-md-5">
-					  <div class="col-md-4">
+					  <div class="col-xs-4 col-sm-4 col-md-4">
 					   <label class="pull-right">Gender</label>
 					  </div>
-					  <div class="col-md-8">
+					  <div class="col-xs-8 col-sm-8 col-md-8">
 					    <form:input type="text" class="form-control pull-left" path="gender"/>
 					  </div>
 					</div>
 					<div class="row col-xs-5 col-sm-5 col-md-5">
 
-					  <div class="col-md-4">
+					  <div class="col-xs-4 col-sm-4 col-md-4">
 					   <label class="pull-right">Phone</label>
 					  </div>
-					  <div class="col-md-8">
+					  <div class="col-xs-8 col-sm-8 col-md-8">
 					    <form:input type="number" class="form-control pull-left" path="phoneNumber"/>
 					  </div>
 				
@@ -141,19 +141,19 @@
 				</div>
 				<div clas="row col-md-offset-1 col-xs-10 col-sm-10 col-md-10">
 					<div class="row col-xs-5 col-sm-5 col-md-5">
-					  <div class="col-md-4">
+					  <div class="col-xs-4 col-sm-4 col-md-4">
 					   <label class="pull-right">Email</label>
 					  </div>
-					  <div class="col-md-8">
+					  <div class="col-xs-8 col-sm-8 col-md-8">
 					    <form:input type="text" class="form-control pull-left" path="email"/>
 					  </div>
 					</div>
 					<div class="row col-xs-5 col-sm-5 col-md-5">
 
-					  <div class="col-md-4">
+					  <div class="col-xs-4 col-sm-4 col-md-4">
 					   <label class="pull-right">City</label>
 					  </div>
-					  <div class="col-md-8">
+					  <div class="col-xs-8 col-sm-8 col-md-8">
 					    <form:select  class="form-control pull-left" path="city">
 					      <form:options items="${cityMap}"/>
 					    </form:select>
@@ -163,19 +163,19 @@
 				</div>
 				<div clas="row col-md-offset-1 col-xs-10 col-sm-10 col-md-10">
 					<div class="row col-xs-5 col-sm-5 col-md-5">
-					  <div class="col-md-4">
+					  <div class="col-xs-4 col-sm-4 col-md-4">
 					   <label class="pull-right">username</label>
 					  </div>
-					  <div class="col-md-8">
+					  <div class="col-xs-8 col-sm-8 col-md-8">
 					    <form:input type="text" class="form-control pull-left" path="userName"/>
 					  </div>
 					</div>
 					<div class="row col-xs-5 col-sm-5 col-md-5">
 
-					  <div class="col-md-4">
+					  <div class="col-xs-4 col-sm-4 col-md-4">
 					   <label class="pull-right">district</label>
 					  </div>
-					  <div class="col-md-8">
+					  <div class="col-xs-8 col-sm-8 col-md-8">
 					    <form:select class="form-control pull-left" path="district">
 					      <form:options items="${districtMap}"/> 
 					    </form:select>
@@ -185,10 +185,10 @@
 				</div>
 				<div clas="row col-md-offset-1 col-xs-10 col-sm-10 col-md-10">
 					<div class="row col-xs-5 col-sm-5 col-md-5">
-					  <div class="col-md-4">
+					  <div class="col-xs-4 col-sm-4 col-md-4">
 					   <label class="pull-right">School</label>
 					  </div>
-					  <div class="col-md-8">
+					  <div class="col-xs-8 col-sm-8 col-md-8">
 					    <form:select  class="form-control pull-left" path="school" >
 					      <form:options items="${schoolMap}"/>
 					    </form:select>

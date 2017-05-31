@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib  prefix="form"   uri="http://www.springframework.org/tags/form"  %>
 <%@page session="true"%>
-
+<%@page import="com.nguyenvando.Utils.MyAppUtil" %>
 <html>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <title>Student</title>
@@ -101,8 +101,7 @@
 	#content{
 	  margin-top: 5%;
 	  margin-bottom: 1%;
-	  overflow: scroll;
-	  height: 200px;
+	  
 	}
 	#close {
      margin-right: 25px;
@@ -114,9 +113,9 @@
 	div#L_CLASS {
       background-color: darkslategrey;    
 	}
-	input#moneyValue {
+	input#moneyValue,select#moneyValue {
 	    width: 100%;
-	    height: 12%;
+	    height: 10%;
 	    border-bottom-left-radius: 5%;
 	    border-radius: 5%;
     }
@@ -136,6 +135,10 @@
 	  margin-left: 5%;
 	  margin-bottom: 2%;
 	}
+	input#btnSubmit-UploadProfile,label#setImgProfile {
+	  width: 60%;
+	  margin-left: 34%;
+	}
  </style> 
  <link rel="stylesheet" href="css/selectBox.css">
   <link rel="stylesheet" href="css/style.css">
@@ -151,7 +154,7 @@
     <li><a data-toggle="tab" href="#register"><span class="glyphicon glyphicon-registration-mark"> Register</span></a></li>
     <li><a data-toggle="tab" href="#schedule"><span class="glyphicon glyphicon-time"> Schedule</span></a></li>
     <li><a data-toggle="tab" href="#exam"><span class="glyphicon glyphicon-book"> Score/Exam</span></a></li>
-    <li><a data-toggle="tab" href="#schoolFee"><span class="glyphicon glyphicon-usd"> ShoolFee</span></a></li>
+    <li><a data-toggle="tab" href="#schoolFee" id="menuFee"><span class="glyphicon glyphicon-usd"> ShoolFee</span></a></li>
     <li><a data-toggle="tab" href="#notify"><span class="glyphicon glyphicon-globe"> Notify</span></a></li>
     <c:if test="${pageContext.request.userPrincipal.name != null}">
     <li><a href="javascript:formSubmit()"><span class="glyphicon glyphicon-log-out"> Logout</span></a></li>
@@ -316,10 +319,13 @@
            <img src="${Student.stAccount.profileImgUrl}" style="width:150px">
           </div>
           <div class="row">
-           
-            <label for="file_input_id">Set Profile Image</label>
-			<input type="file" id="file_input_id">
-           
+           <form id="login_frm" enctype="multipart/form-data" action="${pageContext.request.contextPath}/student/setProfileImg" method="post">
+            <label for="file_input_id" id="setImgProfile" >
+			<input type="file" id="file_input_id" name="file" accept="image/*">
+				Profile Image
+			</label>
+			<input type="submit" value="Upload" width="70px" id="btnSubmit-UploadProfile"/>
+           </form>
           </div>
           
        </div>
@@ -514,19 +520,20 @@
     
      <!-- Menu Pay School Fee --> 
      <div id="schoolFee" class="tab-pane fade">
-      <div><h3><span class="glyphicon glyphicon-bitcoin"> Choose Method to pay</span></h3></div>
-      <c:forEach items="${class_StList}" var="list">
+      <div><h3><span class="glyphicon glyphicon-bitcoin"> Choose Method to pay</span></h3></div>    
+      <c:forEach items="${class_StList}" var="list">     
       	<div class="col-xs-3 col-sm-3 col-md-3">
 			<div class="widget style1 navy-bg" id="L_CLASS">
 				<h4>${list.className}</h4>
+				<h5>Fee:&nbsp; ${list.fee} VND</h5>
+				<h5 >Remain: &nbsp;${list.feeRemain} VND </h5> 				
 					<ul class="list-unstyled m-t-md">
-						<li class="pull-right">
-							
+						<li class="pull-right">							
 						</li>
 					</ul>
 			</div>
-      </div>
-    </c:forEach>
+        </div>
+      </c:forEach>
       
        <div class="btn-group btn-group-justified">
 	    <a class="btn btn-primary"  id="btnMoney">InputMoney</a>
@@ -557,10 +564,12 @@
 			      </div>
 			      <br><br>
 			      <div class="row">			       
-			        <div class="col-xs-4 col-sm-4 col-md-4">
-			        	<label>Nhập Số Tiền :</label>
-			      		<input type="number" id="moneyValue" class="col-md-4 form-control" />
-			      		<input type="hidden" id="txtStudentId" value="${Student.studentId}"/>
+			        <div class="col-xs-5 col-sm-5 col-md-5">
+			        	<label>Select payment times</label>
+			        	<div id="selectBoxFee">			        	
+			        	</div>
+			      	<!-- <input type="number" id="moneyValue" class="col-md-4 form-control" /> -->	
+			      		<input type="hidden" id="txtStudentId" value="${StudentForm.studentId}"/>
 			        </div> 
 			      </div>
 				
@@ -599,14 +608,92 @@
 </div>
 <script type="text/javascript">
   $(document).ready(function(){ 
-	 
+	
+
+	  //select class for payment  VND
+	  $('select#select_class').change(function () {
+		  var data = $('select#select_class').val();
+		  var myContextPath = "${pageContext.request.contextPath}";
+			$.ajax({
+				type : "GET",
+				contentType : 'application/json; charset=UTF-8',
+				dataType : 'json',
+				url : myContextPath + "/myAPI/getClassFee?data=" + data,
+				success : function(data) {
+					
+					if(data.classFeeRemain == data.classfee){
+						var selectBoxfee = document.getElementById('selectBoxFee');
+						 $(selectBoxfee).empty();
+						 $(selectBoxfee).append(
+							' <select class="col-md-4 form-control" id="moneyValue">'+
+								'<option value="1">1st payment 30%</option>'+
+								' <option value="2">2nd payment 30%</option>'+
+								'<option value="3">3rd payment 40%</option>	'+
+							'</select>'
+						 );
+
+					}
+					if(data.classFeeRemain == data.classfee/100*70){
+						var selectBoxfee = document.getElementById('selectBoxFee');
+						 $(selectBoxfee).empty();
+						 $(selectBoxfee).append(
+							' <select class="col-md-4 form-control" id="moneyValue">'+								
+								' <option value="2">2nd payment 30%</option>'+
+								'<option value="3">3rd payment 40%</option>	'+
+							'</select>'
+						 );
+					}
+					if(data.classFeeRemain == data.classfee/100*30){
+						var selectBoxfee = document.getElementById('selectBoxFee');
+						 $(selectBoxfee).empty();
+						 $(selectBoxfee).append(
+							' <select class="col-md-4 form-control" id="moneyValue">'+								
+								' <option value="2">2nd payment 30%</option>'+								
+							'</select>'
+						 );
+					}
+					if(data.classFeeRemain == data.classfee/100*60){
+						var selectBoxfee = document.getElementById('selectBoxFee');
+						 $(selectBoxfee).empty();
+						 $(selectBoxfee).append(
+							' <select class="col-md-4 form-control" id="moneyValue">'+	
+								'<option value="1">1st payment 30%</option>'+
+								' <option value="2">2nd payment 30%</option>'+								
+							'</select>'
+						 );
+					}
+
+					if(data.classFeeRemain == data.classfee/100*40){
+						var selectBoxfee = document.getElementById('selectBoxFee');
+						 $(selectBoxfee).empty();
+						 $(selectBoxfee).append(
+							' <select class="col-md-4 form-control" id="moneyValue">'+																
+								'<option value="3">3rd payment 40%</option>	'+
+							'</select>'
+						 );
+					}
+					if(data.classFeeRemain == 0){
+						var selectBoxfee = document.getElementById('selectBoxFee');
+						 $(selectBoxfee).empty();
+						 $(selectBoxfee).append('<h4>You already finished payment</h4>');
+					}
+					
+				},
+				done : function(e) {
+					console.log("DONE");
+				}
+			});	    	  
+	  });
+	  
 	  //Show erorrs message
 	  $('#msgRegister').css({"color":"#009966","font-size":"13px"}).fadeOut(6000);	  
 	  
 	  $('button#sendMoneybtn').click(function () { // select box form pay fee by money
 		
 		  var data1 = $('select#select_class').val();
-	      var data2 = $('input#moneyValue').val();	     
+	   //   var data2 = $('input#moneyValue').val();	
+	      var data2 = $('select#moneyValue').val();
+	       alert(data2);
 	      var data3 = $('input#txtStudentId').val();
 	      if(data2 < 0 || null==data1 || null==data3){
 	    	  alert("Bạn chưa chọn lớp cần đóng học phí");

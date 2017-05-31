@@ -1,6 +1,8 @@
 package com.nguyenvando.Controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -25,6 +28,7 @@ import com.nguyenvando.Entities.Student;
 import com.nguyenvando.Entities.User;
 import com.nguyenvando.Services.StudentManagementService;
 import com.nguyenvando.Utils.FormForList;
+import com.nguyenvando.Utils.MyAppUtil;
 import com.nguyenvando.Utils.StudentFormAdd;
 
 @Controller
@@ -45,8 +49,11 @@ public class StudentManageController {
 		
 			if(currentStudent!=null){	
 			//	List<Class> ClassList = new ArrayList<>();
-
-				map.put("class_StList",currentStudent.getClassOfStudent());
+				 map.put("class_StList",currentStudent.getClassOfStudent());
+				// moi them
+				 map.put("Student",currentStudent);
+				//--------------------------------
+				
 				return this.viewStudentForm(map);
 			}else{
 				map.put("error","Cannot Found Student into database!");
@@ -173,4 +180,26 @@ public class StudentManageController {
 		}
 	}
 
+	@RequestMapping(value="/setProfileImg",method=RequestMethod.POST)
+	public String updatePassword(@RequestParam("file")MultipartFile file ,HttpServletRequest request
+			,final RedirectAttributes redirectAttributes)throws IOException,IllegalArgumentException{
+		try{			
+			String path = request.getSession().getServletContext().getRealPath("/") + "Upload/ProfileStudent/";
+			if(!file.isEmpty()){
+				MyAppUtil.uploadFile(file, path);
+			}			
+			
+			User currentUser = currentStudent.getStAccount();
+			String imagePath = "../Upload/ProfileStudent/" + file.getOriginalFilename();
+			
+			if(studentService.setProfileImg(currentUser, imagePath)){
+				System.out.println("Update img!");
+			}			
+			
+			return "redirect:/student/home";
+		}catch(Exception e){
+			redirectAttributes.addFlashAttribute("message", e.getMessage());
+			return "redirect:/student/home";
+		}
+	}
 }

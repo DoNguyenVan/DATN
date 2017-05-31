@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.nguyenvando.Entities.Class;
@@ -60,12 +61,44 @@ public class MyAppAPI {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value="/getClassFee",method=RequestMethod.GET)
+	public Map<String,Object> getClassFee(@RequestParam(name="data")String data){	
+		Map<String, Object> map = new HashMap<>();
+		Class cObject = classService.getClassById(Integer.parseInt(data));		
+		map.put("classfee", cObject.getFee());
+		map.put("classFeeRemain", cObject.getFeeRemain());
+		return map;
+	}
+	
+	@ResponseBody
 	@RequestMapping(value="/paidFeeByMoney",method=RequestMethod.GET)
 	public Map<String,Object>  paidFeeByMoney(@RequestParam(name="data")String[] data){		
 		System.out.println(data[0] +" "+ data[1]+" "+data[2]);
 		Map<String, Object> map = new HashMap<>();
 		try{
-			studentService.paidFee(Integer.parseInt(data[0]),Float.parseFloat(data[1]),Integer.parseInt(data[2]));
+			String lan1="0.0",lan2="0.0",lan3="0.0";				
+			Class cObject = classService.getClassById(Integer.parseInt(data[0]));
+			Float fee = cObject.getFee();
+			float feeValue = 0;
+			switch (Integer.parseInt(data[1])) {
+			case 1:
+				lan1 = fee/100*30+"";
+				feeValue = Float.parseFloat(lan1);
+				break;
+			case 2:
+				lan2 = fee/100*30+"";
+				feeValue = Float.parseFloat(lan2);
+				break;
+			case 3:
+				lan3 = fee/100*40+"";
+				feeValue = Float.parseFloat(lan3);
+				break;
+
+			default:
+				break;
+			}
+
+			studentService.paidFee(Integer.parseInt(data[0]),feeValue,Integer.parseInt(data[2]));
 			map.put("msg", "You were paid fee success!");
 			return map;
 		}catch(Exception e){
@@ -80,6 +113,7 @@ public class MyAppAPI {
 		return  studentService.mapDistrict(Integer.parseInt(data));			
 	}
 
+	
 	@ResponseBody
 	@RequestMapping(value="/registerClassFormAddmin",method=RequestMethod.GET)
 	public Map<String,Object>  registerClass(@RequestParam(name="data")String[] data){		

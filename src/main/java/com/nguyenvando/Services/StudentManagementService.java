@@ -60,4 +60,5 @@ public interface StudentManagementService{
 	public void RegisterClassForStudent(Student st , String classId);
 	public void paidFee(Integer classId, float feeValue, Integer studentId);
 	public boolean updatePassword(String username,String oldPassword,String newPassword);
+	public boolean setProfileImg(User stAccount, String path);
 }

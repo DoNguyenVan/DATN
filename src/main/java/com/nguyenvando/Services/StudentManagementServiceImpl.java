@@ -615,4 +615,18 @@ public class StudentManagementServiceImpl implements StudentManagementService {
 		}else return false;
 	}
 
+	@Transactional
+	@Override
+	public boolean setProfileImg(User stAccount, String path) {
+		
+		try{
+			stAccount.setProfileImgUrl(path);
+			myappdao.insertOrUpdate(stAccount);
+			return true;
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}				
+	}
+
 }
